@@ -1,0 +1,143 @@
+:root {
+    --gold: #d4af37;
+    --dark: #1a1a1a;
+    --light: #f9f9f9;
+}
+
+/* --- PAGE STYLES --- */
+.sub-hero {
+    background: linear-gradient(135deg, #fdfbf7, #f5efdc);
+    padding: 80px 20px;
+    text-align: center;
+}
+.hero-text h1 { font-family: 'Playfair Display'; font-size: 3rem; margin-bottom: 15px; }
+.hero-text p { font-size: 1.2rem; color: #555; max-width: 600px; margin: 0 auto; }
+
+.sub-container { max-width: 1000px; margin: 50px auto; padding: 0 20px; }
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    margin-bottom: 60px;
+    text-align: center;
+}
+.benefit-card i { font-size: 30px; color: var(--gold); margin-bottom: 15px; }
+.benefit-card h3 { font-size: 16px; margin-bottom: 10px; }
+.benefit-card p { font-size: 13px; color: #666; }
+
+.form-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 40px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+.form-header { text-align: center; margin-bottom: 30px; }
+.form-header h2 { font-family: 'Playfair Display'; margin-bottom: 5px; }
+
+.input-group { margin-bottom: 20px; text-align: left; }
+.input-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; }
+.input-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; }
+.input-row { display: flex; gap: 20px; }
+
+.checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.checkbox-grid label { font-size: 13px; font-weight: normal; cursor: pointer; }
+
+.btn-gold-lg {
+    width: 100%;
+    background: var(--gold);
+    color: #fff;
+    padding: 15px;
+    border: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+.btn-gold-lg:hover { background: #b89628; }
+
+.privacy-note { text-align: center; font-size: 12px; color: #999; margin-top: 15px; }
+
+/* --- POPUP MODAL --- */
+.newsletter-popup {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+.newsletter-popup.active { display: flex; opacity: 1; }
+
+.popup-content {
+    width: 800px;
+    height: 450px;
+    background: #fff;
+    display: flex;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    transform: scale(0.9);
+    transition: transform 0.5s;
+}
+.newsletter-popup.active .popup-content { transform: scale(1); }
+
+.popup-left {
+    flex: 1;
+    background: url('https://images.unsplash.com/photo-1596464871407-1e5443202957?w=500') center/cover;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.popup-left::after {
+    content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.3);
+}
+.popup-left h3 {
+    position: relative; z-index: 2; color: #fff;
+    font-family: 'Playfair Display'; font-size: 2rem; text-align: center;
+}
+
+.popup-right {
+    flex: 1.2;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.close-popup {
+    position: absolute; top: 15px; right: 20px;
+    font-size: 24px; cursor: pointer; color: #999;
+}
+
+.popup-form input { width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #ddd; }
+.popup-footer { font-size: 12px; color: #999; margin-top: 15px; cursor: pointer; text-decoration: underline; }
+
+/* --- SUCCESS STATE --- */
+.success-view { text-align: center; padding: 20px; display: none; }
+.success-icon { font-size: 50px; color: #2e7d32; margin-bottom: 20px; }
+.discount-code {
+    background: #fcfcfc; border: 2px dashed var(--gold);
+    padding: 10px 20px; font-size: 20px; font-weight: bold;
+    display: inline-block; margin: 15px 0; letter-spacing: 2px;
+}
+
+/* --- MOBILE --- */
+@media (max-width: 768px) {
+    .benefits-grid { grid-template-columns: 1fr 1fr; }
+    .popup-content { width: 90%; height: auto; flex-direction: column; }
+    .popup-left { height: 150px; }
+    .popup-right { padding: 30px; }
+}

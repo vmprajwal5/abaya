@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join the Community | Abaya Clothing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/newsletter.css">
+</head>
+<body>
+
+    <header class="sub-hero">
+        <div class="hero-text">
+            <h1>Join the Abaya Clothing Community</h1>
+            <p>Be the first to know about new collections, exclusive offers, and modest fashion inspiration.</p>
+        </div>
+    </header>
+
+    <div class="sub-container">
+        
+        <section class="benefits-grid">
+            <div class="benefit-card">
+                <i class="fas fa-tshirt"></i>
+                <h3>New Arrivals</h3>
+                <p>Early access to new collections before anyone else.</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-percent"></i>
+                <h3>Exclusive Offers</h3>
+                <p>Member-only discounts and special promotions.</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-star"></i>
+                <h3>Style Inspiration</h3>
+                <p>Modest fashion tips, hijab tutorials, and styling guides.</p>
+            </div>
+            <div class="benefit-card">
+                <i class="fas fa-birthday-cake"></i>
+                <h3>Birthday Treats</h3>
+                <p>Special gift on your birthday month.</p>
+            </div>
+        </section>
+
+        <div class="form-wrapper">
+            <div class="form-header">
+                <h2>Sign Up & Get 10% Off</h2>
+                <p>Join 10,000+ modest fashion lovers.</p>
+            </div>
+
+            <form id="subscribePageForm" onsubmit="handleSubscription(event, 'page')">
+                <div class="input-group">
+                    <label>Email Address *</label>
+                    <input type="email" id="pageEmail" placeholder="your@email.com" required>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>First Name (Optional)</label>
+                        <input type="text" id="pageName">
+                    </div>
+                    <div class="input-group">
+                        <label>Birthday (Optional)</label>
+                        <input type="date" id="pageDob">
+                    </div>
+                </div>
+
+                <div class="preferences">
+                    <label>I'm interested in:</label>
+                    <div class="checkbox-grid">
+                        <label><input type="checkbox" checked> New Arrivals</label>
+                        <label><input type="checkbox" checked> Sales & Promotions</label>
+                        <label><input type="checkbox"> Style Tips</label>
+                        <label><input type="checkbox"> Islamic Blog</label>
+                    </div>
+                </div>
+
+                <div class="consent">
+                    <label><input type="checkbox" required> I agree to receive marketing emails from Abaya Clothing.</label>
+                </div>
+
+                <button type="submit" class="btn-gold-lg">Subscribe & Get 10% Off</button>
+            </form>
+            
+            <p class="privacy-note">We respect your privacy. Unsubscribe anytime.</p>
+        </div>
+
+    </div>
+
+    <script src="assets/js/newsletter.js"></script>
+</body>
+</html>

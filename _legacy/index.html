@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abaya | Minimalist Modest Fashion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Link -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        <p>Complimentary Shipping on Global Orders Over $150</p>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container header-grid">
+            <div class="header-left">
+                <button class="menu-toggle" aria-label="Toggle Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="search-icon-wrapper">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+
+            <div class="header-center">
+                <a href="index.html" class="brand-logo">ABAYA</a>
+            </div>
+
+            <div class="header-right">
+                <a href="login.html" class="icon-link"><i class="far fa-user"></i></a>
+                <a href="cart.html" class="icon-link cart-link">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Overlay (Hidden by default) -->
+    <nav class="nav-overlay">
+        <div class="nav-content">
+            <button class="close-menu">&times;</button>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop All</a></li>
+                <li><a href="shop.html">New Arrivals</a></li>
+                <li><a href="shop.html">Abayas</a></li>
+                <li><a href="shop.html">Hijabs</a></li>
+                <li><a href="shop.html">Accessories</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-bg"
+            style="background-image: url('https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=1920&auto=format&fit=crop');">
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title fade-in">Monochrome<br>Elegance</h1>
+            <p class="hero-subtitle fade-in delay-1">Defining modern modesty through simplicity.</p>
+            <a href="shop.html" class="btn btn-white fade-in delay-2">Discover Collection</a>
+        </div>
+    </section>
+
+    <!-- Featured Categories -->
+    <section class="section categories-section">
+        <div class="container">
+            <div class="category-grid">
+                <a href="shop.html" class="cat-card">
+                    <img src="https://images.unsplash.com/photo-1596464871407-1e5443202957?q=80&w=800" alt="Abayas">
+                    <div class="cat-label">
+                        <h3>Abayas</h3>
+                        <span class="link-arrow">Shop Now <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                <a href="shop.html" class="cat-card">
+                    <img src="https://images.unsplash.com/photo-1585854460596-f3089d4d5462?q=80&w=800" alt="Hijabs">
+                    <div class="cat-label">
+                        <h3>Hijabs</h3>
+                        <span class="link-arrow">Shop Now <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- New Arrivals -->
+    <section class="section new-arrivals">
+        <div class="container">
+            <div class="section-header">
+                <h2>New Arrivals</h2>
+                <a href="shop.html" class="view-all">View All</a>
+            </div>
+
+            <div id="productGrid" class="product-grid">
+                <!-- Products injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Editorial / Divider -->
+    <section class="editorial-section">
+        <div class="editorial-content">
+            <h2>The Art of Modesty</h2>
+            <p>Crafted with precision, designed for the modern woman who values elegance and tradition.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h4>ABAYA</h4>
+                    <p>Minimalist modest fashion for the contemporary soul.</p>
+                </div>
+                <div class="footer-links">
+                    <h5>Shop</h5>
+                    <ul>
+                        <li><a href="#">New Arrivals</a></li>
+                        <li><a href="#">Best Sellers</a></li>
+                        <li><a href="#">Abayas</a></li>
+                    </ul>
+                </div>
+                <div class="footer-newsletter">
+                    <h5>Newsletter</h5>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Your email address">
+                        <button type="submit">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Abaya Clothing. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/home.js"></script>
+</body>
+
+</html>

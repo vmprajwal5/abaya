@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Collection | Abaya Clothing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/style.css"> <link rel="stylesheet" href="assets/css/shop.css">
+</head>
+<body class="bg-pattern-abaya"> <div class="page-header">
+        <div class="breadcrumb">
+            <a href="index.html">Home</a> <span>/</span> <span class="current-cat">Abayas</span>
+        </div>
+        <h1 class="cat-title">Abayas Collection</h1>
+        <p class="cat-desc">Discover our exquisite collection of abayas, from everyday elegance to special occasion pieces.</p>
+        <span class="product-count">Showing <span id="countVal">0</span> products</span>
+    </div>
+
+    <section class="shop-container">
+        
+        <button class="mobile-filter-btn" onclick="toggleSidebar()">
+            <i class="fas fa-sliders-h"></i> Filters
+        </button>
+
+        <aside class="shop-sidebar" id="filterSidebar">
+            <div class="sidebar-header-mobile">
+                <h3>Filters</h3>
+                <button onclick="toggleSidebar()">&times;</button>
+            </div>
+
+            <h3 class="filter-main-title">Filter By</h3>
+
+            <div class="filter-group">
+                <h4 onclick="toggleFilter(this)">Category <i class="fas fa-chevron-down"></i></h4>
+                <div class="filter-content">
+                    <label><input type="checkbox" value="Daily Wear" class="filter-input" data-type="category"> Daily Wear</label>
+                    <label><input type="checkbox" value="Party Wear" class="filter-input" data-type="category"> Party Wear</label>
+                    <label><input type="checkbox" value="Embroidered" class="filter-input" data-type="category"> Embroidered</label>
+                    <label><input type="checkbox" value="Butterfly Abayas" class="filter-input" data-type="category"> Butterfly</label>
+                    <label><input type="checkbox" value="Premium" class="filter-input" data-type="category"> Premium</label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h4 onclick="toggleFilter(this)">Price Range <i class="fas fa-chevron-down"></i></h4>
+                <div class="filter-content">
+                    <div class="price-inputs">
+                        <input type="number" id="minPrice" placeholder="Min" value="0">
+                        <span>-</span>
+                        <input type="number" id="maxPrice" placeholder="Max" value="5000">
+                    </div>
+                    <button class="btn-apply-price" onclick="applyPriceFilter()">Apply</button>
+                    <small>Price in <span class="current-currency-display">USD</span></small>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h4 onclick="toggleFilter(this)">Color <i class="fas fa-chevron-down"></i></h4>
+                <div class="filter-content colors-grid">
+                    <div class="color-swatch" style="background: #000;" data-val="black" title="Black"></div>
+                    <div class="color-swatch" style="background: #1a2c5b;" data-val="navy" title="Navy"></div>
+                    <div class="color-swatch" style="background: #800020;" data-val="burgundy" title="Burgundy"></div>
+                    <div class="color-swatch" style="background: #808080;" data-val="gray" title="Gray"></div>
+                    <div class="color-swatch" style="background: #f5f5dc;" data-val="beige" title="Beige"></div>
+                    <div class="color-swatch" style="background: #fff; border:1px solid #ddd;" data-val="white" title="White"></div>
+                </div>
+            </div>
+
+            <button class="btn-clear-all" onclick="clearFilters()">Clear All Filters</button>
+        </aside>
+
+        <main class="shop-content">
+            
+            <div class="shop-toolbar">
+                <div class="active-filters" id="activeFilters">
+                    </div>
+                
+                <div class="toolbar-actions">
+                    <div class="sort-wrapper">
+                        <span>Sort by:</span>
+                        <select id="sortSelect" onchange="handleSort()">
+                            <option value="newest">Newest First</option>
+                            <option value="priceLow">Price: Low to High</option>
+                            <option value="priceHigh">Price: High to Low</option>
+                            <option value="rating">Best Rating</option>
+                        </select>
+                    </div>
+                    <div class="view-toggle">
+                        <i class="fas fa-th-large active" onclick="setView('grid')"></i>
+                        <i class="fas fa-list" onclick="setView('list')"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-grid" id="shopGrid">
+                </div>
+
+            <div class="pagination" id="pagination">
+                </div>
+
+        </main>
+    </section>
+
+    <section class="section-padding new-in-section">
+        <h2 class="section-title">Just In: Abayas</h2>
+        <div class="carousel-container">
+            <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
+            <div class="carousel-track" id="newInCarousel">
+                </div>
+            <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </section>
+
+    <div class="overlay-sidebar" onclick="toggleSidebar()"></div>
+
+   <script>
+    currentState.category = "abaya"; 
+    document.querySelector('.cat-title').innerText = "Hijab Collection";
+    document.body.className = "bg-pattern-hijab";
+</script>
+</body>
+</html>

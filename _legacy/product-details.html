@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Embroidered Abaya - Black | Abaya Clothing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/product.css">
+</head>
+<body>
+
+    <div class="breadcrumb-container">
+        <a href="index.html">Home</a> / <a href="shop.html">Abayas</a> / <a href="#">Party Wear</a> / <span>Luxury Embroidered Abaya</span>
+    </div>
+
+    <section class="product-container">
+        
+        <div class="product-left">
+            <div class="gallery-wrapper">
+                <div class="thumbnails">
+                    <img src="https://images.unsplash.com/photo-1596464871407-1e5443202957?w=150" class="thumb active" onclick="changeImage(this)">
+                    <img src="https://images.unsplash.com/photo-1596464871383-09741d402b8d?w=150" class="thumb" onclick="changeImage(this)">
+                    <img src="https://images.unsplash.com/photo-1585854460596-f3089d4d5462?w=150" class="thumb" onclick="changeImage(this)">
+                    <img src="https://images.unsplash.com/photo-1585854460614-27c13db4a30e?w=150" class="thumb" onclick="changeImage(this)">
+                </div>
+                <div class="main-image-container">
+                    <img id="mainImage" src="https://images.unsplash.com/photo-1596464871407-1e5443202957?w=800" alt="Luxury Abaya">
+                    <button class="zoom-btn" onclick="openLightbox()"><i class="fas fa-expand"></i></button>
+                </div>
+            </div>
+
+            <div class="product-tabs">
+                <div class="tab-header">
+                    <button class="tab-btn active" onclick="openTab(event, 'desc')">Description</button>
+                    <button class="tab-btn" onclick="openTab(event, 'size')">Size & Fit</button>
+                    <button class="tab-btn" onclick="openTab(event, 'shipping')">Shipping</button>
+                    <button class="tab-btn" onclick="openTab(event, 'reviews')">Reviews (12)</button>
+                </div>
+
+                <div id="desc" class="tab-content active">
+                    <p>Experience elegance with our Luxury Embroidered Abaya. Crafted from premium Nida fabric, this piece features intricate hand-stitched embroidery along the sleeves and hem. Perfect for special occasions or formal gatherings.</p>
+                    <ul class="feature-list">
+                        <li>Material: High-quality Nida Fabric</li>
+                        <li>Style: Front Open with Buttons</li>
+                        <li>Includes matching hijab and belt</li>
+                    </ul>
+                </div>
+
+                <div id="size" class="tab-content">
+                    <table class="size-table">
+                        <tr><th>Size</th><th>Bust</th><th>Length</th></tr>
+                        <tr><td>S</td><td>36"</td><td>54"</td></tr>
+                        <tr><td>M</td><td>38"</td><td>56"</td></tr>
+                        <tr><td>L</td><td>40"</td><td>58"</td></tr>
+                    </table>
+                </div>
+
+                <div id="shipping" class="tab-content">
+                    <p><strong>Free Shipping:</strong> On all orders above $50.</p>
+                    <p><strong>Delivery:</strong> 3-5 Business days.</p>
+                    <p><strong>Returns:</strong> 30-day return policy on unworn items.</p>
+                </div>
+                
+                <div id="reviews" class="tab-content">
+                    <div class="review-item">
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p><strong>Fatima R.</strong> - <em>Absolutely stunning! The embroidery is even better in person.</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-right">
+            <h1 class="product-title">Luxury Embroidered Abaya</h1>
+            <p class="sku">SKU: AB-LUX-BLK-001</p>
+            
+            <div class="price-wrapper">
+                <span class="old-price">$162.00</span>
+                <span class="current-price" id="displayPrice">$130.00</span>
+                <span class="discount-badge">Save 20%</span>
+            </div>
+
+            <div class="rating-overview">
+                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                <span>(24 Reviews)</span> | <span class="stock-status in-stock"><i class="fas fa-check-circle"></i> In Stock</span>
+            </div>
+
+            <hr class="divider">
+
+            <div class="selector-group">
+                <label>Color: <span id="colorName">Black</span></label>
+                <div class="color-options">
+                    <div class="p-color selected" style="background:#000;" data-name="Black" onclick="selectColor(this)"></div>
+                    <div class="p-color" style="background:#1a2c5b;" data-name="Navy Blue" onclick="selectColor(this)"></div>
+                    <div class="p-color" style="background:#800020;" data-name="Burgundy" onclick="selectColor(this)"></div>
+                </div>
+            </div>
+
+            <div class="selector-group">
+                <div class="flex-between">
+                    <label>Size:</label>
+                    <a href="#" onclick="openModal('sizeModal')" class="size-guide-link"><i class="fas fa-ruler"></i> Size Guide</a>
+                </div>
+                <div class="size-options">
+                    <div class="p-size" onclick="selectSize(this)">S</div>
+                    <div class="p-size selected" onclick="selectSize(this)">M</div>
+                    <div class="p-size" onclick="selectSize(this)">L</div>
+                    <div class="p-size" onclick="selectSize(this)">XL</div>
+                    <div class="p-size" onclick="selectSize(this)">XXL</div>
+                </div>
+            </div>
+
+            <div class="selector-group">
+                <label>Quantity:</label>
+                <div class="qty-control">
+                    <button onclick="changeQty(-1)">-</button>
+                    <input type="number" id="qtyInput" value="1" min="1" max="10" readonly>
+                    <button onclick="changeQty(1)">+</button>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-add-bag" onclick="addToBag()">Add to Bag</button>
+                <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+            </div>
+            <button class="btn-buy-now">Buy It Now</button>
+
+            <div class="trust-badges">
+                <div class="trust-item"><i class="fas fa-shield-alt"></i> Secure Payment</div>
+                <div class="trust-item"><i class="fas fa-undo"></i> 30-Day Returns</div>
+                <div class="trust-item"><i class="fas fa-truck"></i> Fast Delivery</div>
+            </div>
+
+            <div class="share-section">
+                <span>Share:</span>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="https://wa.me/?text=Check this Abaya!" target="_blank" class="whatsapp-share"><i class="fab fa-whatsapp"></i> Ask on WhatsApp</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="related-products">
+        <h2>You May Also Like</h2>
+        <div class="related-grid" id="relatedGrid">
+            </div>
+    </section>
+
+    <div class="sticky-mobile-bar">
+        <div class="bar-price">$130.00</div>
+        <button class="btn-add-bag-sm" onclick="addToBag()">Add to Bag</button>
+    </div>
+
+    <div id="sizeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('sizeModal')">&times;</span>
+            <h3>Size Guide</h3>
+            <img src="https://via.placeholder.com/600x400?text=Size+Chart+Image" alt="Size Chart" style="width:100%">
+        </div>
+    </div>
+
+    <div id="lightboxModal" class="lightbox">
+        <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+        <img class="lightbox-content" id="lightboxImg">
+    </div>
+
+    <script src="assets/js/product.js"></script>
+</body>
+</html>

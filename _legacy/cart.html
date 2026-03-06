@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Bag | Abaya Clothing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/cart.css">
+</head>
+<body>
+
+    <div class="cart-wrapper">
+        <h1 class="page-title">Shopping Bag <span id="cartCountHeader">(0 items)</span></h1>
+        
+        <div class="shipping-progress">
+            <p id="shippingMsg">Add <span class="currency-symbol">$</span><span id="shippingDiff">50</span> more to get <strong>FREE SHIPPING</strong></p>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressBar" style="width: 0%;"></div>
+            </div>
+            <p class="success-msg hidden"><i class="fas fa-check-circle"></i> Congratulations! Free shipping applied.</p>
+        </div>
+
+        <div class="cart-layout" id="cartLayout">
+            
+            <div class="cart-items-section">
+                
+                <div id="emptyCartState" class="empty-state hidden">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h2>Your shopping bag is empty</h2>
+                    <p>Looks like you haven't added anything yet.</p>
+                    <a href="shop.html" class="btn-shop">Start Shopping</a>
+                </div>
+
+                <div id="cartItemsList">
+                    </div>
+
+                <div class="cart-actions-row">
+                    <a href="shop.html" class="continue-link"><i class="fas fa-arrow-left"></i> Continue Shopping</a>
+                    <button class="btn-clear" onclick="confirmClearCart()">Clear Cart</button>
+                </div>
+
+                <div id="recentlyRemoved" class="recently-removed hidden">
+                    <p>Item removed from cart. <button onclick="undoRemove()">Undo</button></p>
+                </div>
+
+                <div class="cart-recommended">
+                    <h3>Complete your look</h3>
+                    <div class="rec-grid">
+                        <div class="rec-item">
+                            <img src="https://images.unsplash.com/photo-1585854460596-f3089d4d5462?w=100">
+                            <div>
+                                <p>Matching Hijab</p>
+                                <span>$15.00</span>
+                                <button class="btn-add-sm" onclick="addToCartMock('Matching Hijab', 15)">Add</button>
+                            </div>
+                        </div>
+                        </div>
+                </div>
+            </div>
+
+            <div class="cart-summary-section">
+                <div class="summary-card">
+                    <h2>Order Summary</h2>
+                    
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="subtotalDisplay">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span id="shippingDisplay">Calculated next step</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax (5%)</span>
+                        <span id="taxDisplay">$0.00</span>
+                    </div>
+                    
+                    <div class="promo-section">
+                        <p class="promo-toggle" onclick="togglePromo()">Have a promo code? <i class="fas fa-chevron-down"></i></p>
+                        <div class="promo-input-group hidden" id="promoBox">
+                            <input type="text" id="promoInput" placeholder="Enter code">
+                            <button onclick="applyPromo()">Apply</button>
+                        </div>
+                        <p id="promoMsg" class="promo-msg"></p>
+                    </div>
+
+                    <div class="total-row">
+                        <span>Total</span>
+                        <span id="totalDisplay">$0.00</span>
+                    </div>
+                    
+                    <div class="currency-switch">
+                        <label><input type="radio" name="curr" value="USD" checked onchange="switchCurrency('USD')"> USD</label>
+                        <label><input type="radio" name="curr" value="MVR" onchange="switchCurrency('MVR')"> MVR</label>
+                    </div>
+
+                    <a href="checkout.html" class="btn-checkout">Proceed to Checkout</a>
+                    
+                    <div class="trust-icons">
+                        <i class="fab fa-cc-visa"></i>
+                        <i class="fab fa-cc-mastercard"></i>
+                        <i class="fas fa-lock"></i>
+                        <span>Secure Checkout</span>
+                    </div>
+                </div>
+
+                <div class="gift-option">
+                    <label><input type="checkbox"> This is a gift (+$5.00)</label>
+                    <textarea placeholder="Add a gift message..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="clearModal" class="modal">
+        <div class="modal-content small">
+            <h3>Clear Shopping Bag?</h3>
+            <p>Are you sure you want to remove all items?</p>
+            <div class="modal-actions">
+                <button class="btn-outline" onclick="closeModal()">Cancel</button>
+                <button class="btn-danger" onclick="clearCart()">Yes, Clear It</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/cart.js"></script>
+</body>
+</html> 

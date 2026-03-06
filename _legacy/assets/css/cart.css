@@ -1,0 +1,75 @@
+/* --- LAYOUT --- */
+.cart-wrapper { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+.page-title { font-family: 'Playfair Display'; font-size: 2.5rem; margin-bottom: 20px; }
+.cart-layout { display: grid; grid-template-columns: 65% 32%; gap: 3%; position: relative; }
+
+/* --- SHIPPING BAR --- */
+.shipping-progress { background: #fdfbf7; padding: 15px; border: 1px solid #eee; margin-bottom: 30px; border-radius: 4px; }
+.shipping-progress p { margin-bottom: 5px; font-size: 14px; color: #555; }
+.progress-track { background: #eee; height: 8px; border-radius: 4px; overflow: hidden; }
+.progress-fill { background: #d4af37; height: 100%; transition: width 0.5s ease; }
+.success-msg { color: #2e7d32; font-weight: bold; margin-top: 5px; }
+
+/* --- ITEMS LIST --- */
+.cart-item { display: flex; gap: 20px; padding: 20px 0; border-bottom: 1px solid #eee; transition: 0.3s; }
+.cart-item:hover { background: #fafafa; }
+.item-img { width: 100px; height: 120px; object-fit: cover; border-radius: 4px; }
+.item-details { flex: 1; }
+.item-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.item-name { font-weight: bold; font-family: 'Playfair Display'; font-size: 1.1rem; }
+.item-price { font-weight: bold; }
+.item-meta { font-size: 13px; color: #777; margin-bottom: 15px; }
+.color-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 5px; border: 1px solid #ccc; }
+
+.item-controls { display: flex; justify-content: space-between; align-items: center; }
+.qty-wrapper { display: flex; border: 1px solid #ddd; border-radius: 4px; }
+.qty-btn { width: 30px; height: 30px; background: #fff; border: none; cursor: pointer; }
+.qty-val { width: 30px; text-align: center; line-height: 30px; font-size: 13px; }
+
+.item-actions button { background: none; border: none; font-size: 12px; color: #888; cursor: pointer; margin-left: 15px; text-decoration: underline; }
+.item-actions button:hover { color: #c62828; }
+
+/* --- SUMMARY CARD --- */
+.cart-summary-section { position: relative; }
+.summary-card { background: #f9f9f9; padding: 25px; border-radius: 4px; position: sticky; top: 100px; }
+.summary-card h2 { font-family: 'Playfair Display'; margin-bottom: 20px; font-size: 1.5rem; }
+.summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; color: #555; }
+.total-row { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; font-weight: bold; font-size: 1.2rem; color: #000; }
+
+.btn-checkout { display: block; width: 100%; background: #d4af37; color: #fff; text-align: center; padding: 15px; margin-top: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+.btn-checkout:hover { background: #b89628; }
+
+.trust-icons { margin-top: 20px; display: flex; gap: 10px; align-items: center; justify-content: center; color: #888; font-size: 20px; }
+.trust-icons span { font-size: 12px; }
+
+/* --- EXTRAS --- */
+.empty-state { text-align: center; padding: 50px; }
+.empty-state i { font-size: 60px; color: #ddd; margin-bottom: 20px; }
+.btn-shop { background: #000; color: #fff; padding: 10px 25px; display: inline-block; margin-top: 20px; }
+
+.cart-recommended { margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; }
+.rec-grid { display: flex; gap: 15px; margin-top: 15px; }
+.rec-item { display: flex; gap: 10px; align-items: center; border: 1px solid #eee; padding: 10px; border-radius: 4px; }
+.btn-add-sm { background: #000; color: #fff; border: none; padding: 2px 8px; font-size: 10px; cursor: pointer; }
+
+/* Promo & Currency */
+.promo-toggle { cursor: pointer; color: #d4af37; font-size: 13px; font-weight: bold; }
+.promo-input-group { display: flex; margin-top: 10px; gap: 5px; }
+.promo-input-group input { flex: 1; padding: 8px; border: 1px solid #ddd; }
+.promo-input-group button { background: #000; color: #fff; border: none; padding: 0 15px; cursor: pointer; }
+.promo-msg { font-size: 12px; margin-top: 5px; }
+.currency-switch { margin-top: 15px; font-size: 13px; text-align: right; }
+
+/* Modal */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 2000; }
+.modal-content.small { background: #fff; padding: 30px; text-align: center; width: 300px; border-radius: 4px; }
+.modal-actions { margin-top: 20px; display: flex; gap: 10px; justify-content: center; }
+.btn-danger { background: #c62828; color: #fff; border: none; padding: 8px 15px; cursor: pointer; }
+.btn-outline { background: #fff; border: 1px solid #ccc; padding: 8px 15px; cursor: pointer; }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+    .cart-layout { grid-template-columns: 1fr; }
+    .cart-summary-section { margin-top: 30px; }
+    .item-img { width: 80px; height: 100px; }
+}
