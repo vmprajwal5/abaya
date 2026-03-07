@@ -38,10 +38,11 @@ function Navbar() {
                         </div>
 
                         {/* Navigation */}
-                        <div className="hidden md:flex items-center gap-12">
+                        <div className="hidden md:flex items-center gap-10">
                             <a href="/" className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors">Home</a>
-                            <a href="/shop" className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors">Shop</a>
-                            {/* Admin Link Removed */}
+                            <a href="/shop" className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors">All Products</a>
+                            <a href="/best-sellers" className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors">Best Sellers</a>
+                            <a href="/collections" className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors">Collections</a>
                             <a href="/about" className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors">About</a>
                             <a href="/contact" className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors">Contact</a>
                         </div>

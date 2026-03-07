@@ -32,6 +32,8 @@ const ShippingPolicyPage = lazy(() => import("./pages/ShippingPolicyPage").then(
 const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage").then(module => ({ default: module.PrivacyPolicyPage })))
 const AboutPage = lazy(() => import("./pages/AboutPage").then(module => ({ default: module.AboutPage })))
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage").then(module => ({ default: module.NotFoundPage })))
+const BestSellers = lazy(() => import("./pages/BestSellers"))
+const Collections = lazy(() => import("./pages/Collections"))
 
 // Support Pages
 const ContactPage = lazy(() => import("./pages/ContactPage").then(module => ({ default: module.ContactPage })))
@@ -88,6 +90,8 @@ function App() {
                                                     <Route path="/shop/:slug" element={<CategoryPage />} />
                                                     <Route path="/product/:id" element={<ProductDetails />} />
                                                     <Route path="/about" element={<AboutPage />} />
+                                                    <Route path="/best-sellers" element={<BestSellers />} />
+                                                    <Route path="/collections" element={<Collections />} />
                                                     <Route path="/checkout" element={<CheckoutPage />} />
                                                     <Route path="/order-success" element={<OrderSuccessPage />} />
 
