@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 
 import { User, Lock, Store, Save, Loader2, Check } from "lucide-react"
 import useStoreSettings from "../../hooks/useStoreSettings"
-import axios from "axios"
+import API from "../../services/api"
 import { toast } from "react-hot-toast"
 
 export function SettingsPage() {
@@ -212,13 +212,7 @@ function StoreSettings() {
         e.preventDefault()
         setSaving(true)
         try {
-            const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}")
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${userInfo.token}`,
-                },
-            }
-            await axios.put('http://localhost:5000/api/settings', formData, config)
+            await API.put('/settings', formData)
             await fetchSettings()
             toast.success("Settings updated successfully")
         } catch (error) {
