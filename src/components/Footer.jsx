@@ -50,7 +50,6 @@ export function Footer() {
                         <li><Link to="/new-arrivals" className="hover:text-black hover:underline underline-offset-4 transition-all">New Arrivals</Link></li>
                         <li><Link to="/shop" className="hover:text-black hover:underline underline-offset-4 transition-all">All Products</Link></li>
                         <li><Link to="/best-sellers" className="hover:text-black hover:underline underline-offset-4 transition-all">Best Sellers</Link></li>
-                        <li><Link to="/collections" className="hover:text-black hover:underline underline-offset-4 transition-all">Collections</Link></li>
                     </ul>
                 </div>
 
