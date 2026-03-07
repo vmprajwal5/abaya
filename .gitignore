@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 .env
+.env.local
+.env.*.local
+
+# Backend (separate repo)
+abaya-backend/
+
+# Legacy
+_legacy/
 
 # Editor directories and files
 .vscode/*
