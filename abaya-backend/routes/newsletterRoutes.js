@@ -3,9 +3,6 @@ const router = express.Router();
 const Subscriber = require('../models/Subscriber');
 const { protect, admin } = require('../middleware/authMiddleware');
 
-// @desc    Get all subscribers
-// @route   GET /api/newsletter
-// @access  Private/Admin
 router.get('/', protect, admin, async (req, res) => {
     try {
         const subscribers = await Subscriber.find({}).sort({ createdAt: -1 });
@@ -15,9 +12,6 @@ router.get('/', protect, admin, async (req, res) => {
     }
 });
 
-// @desc    Subscribe to newsletter
-// @route   POST /api/newsletter
-// @access  Public
 router.post('/', async (req, res) => {
     const { email } = req.body;
 

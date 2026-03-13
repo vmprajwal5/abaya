@@ -35,7 +35,6 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Root route - API health check
 app.get('/', (req, res) => {
     res.json({ message: 'Abaya API is running ✅' });
 });
@@ -47,14 +46,11 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/settings', require('./routes/settingRoutes'));
 app.use('/api/newsletter', newsletterRoutes);
 
-const __basedir = path.resolve(); // Common fix for ES Modules/CommonJS
+const __basedir = path.resolve();
 app.use('/uploads', express.static(path.join(__basedir, '/uploads')));
 
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
-// ... (routes)
-
-// Error Handling Middleware
 app.use(notFound);
 app.use(errorHandler);
 

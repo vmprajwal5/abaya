@@ -3,9 +3,6 @@ const router = express.Router();
 const StoreSetting = require('../models/StoreSetting');
 const { protect, admin } = require('../middleware/authMiddleware');
 
-// @desc    Get store settings (create default if not exists)
-// @route   GET /api/settings
-// @access  Public
 router.get('/', async (req, res) => {
     try {
         let settings = await StoreSetting.findOne();
@@ -36,15 +33,11 @@ router.get('/', async (req, res) => {
     }
 });
 
-// @desc    Update store settings
-// @route   PUT /api/settings
-// @access  Private/Admin
 router.put('/', protect, admin, async (req, res) => {
     try {
         let settings = await StoreSetting.findOne();
 
         if (!settings) {
-            // If for some reason it doesn't exist, create it with the sent data or defaults
             settings = new StoreSetting(req.body);
             await settings.save();
             return res.json(settings);

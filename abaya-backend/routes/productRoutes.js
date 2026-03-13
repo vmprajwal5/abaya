@@ -9,10 +9,8 @@ const {
 } = require('../controllers/productController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
-// Route for getting all products
 router.route('/').get(getProducts).post(protect, admin, createProduct);
 
-// Route for getting a single product
 router
     .route('/:id')
     .get(getProductById)

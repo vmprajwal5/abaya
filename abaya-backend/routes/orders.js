@@ -4,9 +4,6 @@ const Order = require('../models/Order');
 const { protect } = require('../middleware/auth');
 const { admin } = require('../middleware/admin');
 
-// @desc    Create new order
-// @route   POST /api/orders
-// @access  Private
 router.post('/', protect, async (req, res) => {
     try {
         const {
@@ -43,9 +40,6 @@ router.post('/', protect, async (req, res) => {
     }
 });
 
-// @desc    Get logged in user orders
-// @route   GET /api/orders/my-orders
-// @access  Private
 router.get('/my-orders', protect, async (req, res) => {
     try {
         const orders = await Order.find({ user: req.user._id }).sort('-createdAt');
@@ -55,9 +49,6 @@ router.get('/my-orders', protect, async (req, res) => {
     }
 });
 
-// @desc    Get order by ID
-// @route   GET /api/orders/:id
-// @access  Private
 router.get('/:id', protect, async (req, res) => {
     try {
         const order = await Order.findById(req.params.id).populate(
@@ -66,7 +57,6 @@ router.get('/:id', protect, async (req, res) => {
         );
 
         if (order) {
-            // Check if admin or order owner
             if (req.user.isAdmin || order.user._id.equals(req.user._id)) {
                 res.json(order);
             } else {

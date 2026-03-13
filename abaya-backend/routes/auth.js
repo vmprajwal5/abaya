@@ -10,9 +10,6 @@ const generateToken = (id) => {
     });
 };
 
-// @desc    Register a new user
-// @route   POST /api/auth/register
-// @access  Public
 router.post('/register', async (req, res) => {
     try {
         const { name, email, password, phone } = req.body;
@@ -46,9 +43,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// @desc    Auth user & get token
-// @route   POST /api/auth/login
-// @access  Public
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -71,9 +65,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// @desc    Get current user profile
-// @route   GET /api/auth/me
-// @access  Private
 router.get('/me', protect, async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
@@ -95,12 +86,8 @@ router.get('/me', protect, async (req, res) => {
     }
 });
 
-// @desc    Get all users (Admin only)
-// @route   GET /api/auth/users
-// @access  Private/Admin
-const { admin } = require('../middleware/auth'); // Assuming you have an admin middleware or check inside
+const { admin } = require('../middleware/auth');
 router.get('/users', protect, async (req, res) => {
-    // rudimentary admin check if middleware is separate
     if (req.user && req.user.isAdmin) {
         try {
             const users = await User.find({});

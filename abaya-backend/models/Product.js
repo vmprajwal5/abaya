@@ -5,8 +5,7 @@ const productSchema = new mongoose.Schema({
     description: { type: String, required: true },
     price: { type: Number, required: true, default: 0 },
 
-    // Specific to Abaya Business
-    fabric: { type: String, required: true }, // e.g., 'Nidha', 'Zoom', 'Jersey'
+    fabric: { type: String, required: true },
 
     category: {
         type: String,
@@ -15,10 +14,9 @@ const productSchema = new mongoose.Schema({
     },
     brand: { type: String, required: false, default: 'Abaya Clothing' },
 
-    image: { type: String, required: true }, // Main display image
-    images: [{ type: String }], // Array of URL strings
+    image: { type: String, required: true },
+    images: [{ type: String }],
 
-    // Enhanced Sizing for Abayas
     sizes: [{
         type: String,
         enum: ['XS', 'S', 'M', 'L', 'XL', '50', '52', '54', '56', '58', '60']
@@ -32,7 +30,6 @@ const productSchema = new mongoose.Schema({
     stock: { type: Number, required: true, default: 0 },
     isFeatured: { type: Boolean, default: false },
 
-    // Timestamps automatically add createdAt and updatedAt
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);

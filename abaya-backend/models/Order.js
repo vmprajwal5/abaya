@@ -77,7 +77,6 @@ const orderSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Middleware to auto-generate order number before saving
 orderSchema.pre('validate', function (next) {
     if (!this.orderNumber) {
         const timestamp = Date.now();

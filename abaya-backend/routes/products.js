@@ -4,9 +4,6 @@ const Product = require('../models/Product');
 const { protect } = require('../middleware/auth');
 const { admin } = require('../middleware/admin');
 
-// @desc    Fetch all products with filters
-// @route   GET /api/products
-// @access  Public
 router.get('/', async (req, res) => {
     try {
         const { category, minPrice, maxPrice, color, featured, search, sort } = req.query;
@@ -52,9 +49,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// @desc    Fetch single product
-// @route   GET /api/products/:id
-// @access  Public
 router.get('/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -69,9 +63,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// @desc    Create a product
-// @route   POST /api/products
-// @access  Private/Admin
 router.post('/', protect, admin, async (req, res) => {
     try {
         const product = new Product(req.body);
@@ -82,9 +73,6 @@ router.post('/', protect, admin, async (req, res) => {
     }
 });
 
-// @desc    Update a product
-// @route   PUT /api/products/:id
-// @access  Private/Admin
 router.put('/:id', protect, admin, async (req, res) => {
     try {
         const {
@@ -122,9 +110,6 @@ router.put('/:id', protect, admin, async (req, res) => {
     }
 });
 
-// @desc    Delete a product
-// @route   DELETE /api/products/:id
-// @access  Private/Admin
 router.delete('/:id', protect, admin, async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
