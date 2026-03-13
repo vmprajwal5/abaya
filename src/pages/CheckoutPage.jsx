@@ -5,10 +5,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { motion, AnimatePresence } from "framer-motion"
 import { Check, CreditCard, ShoppingBag, Lock, AlertCircle, Smartphone, MapPin, Truck, ChevronDown, ChevronUp } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, Navigate } from "react-router-dom"
 
 import { useCart } from "../contexts/CartContext"
 import { useCurrency } from "../contexts/CurrencyContext"
+import { useAuth } from "../contexts/AuthContext"
 import { Button } from "../components/ui/button"
 import { cn } from "../lib/utils"
 import { openWhatsApp } from "../lib/whatsapp"
@@ -136,6 +137,7 @@ const checkoutSchema = z.object({
 
 export function CheckoutPage() {
     const navigate = useNavigate()
+    const { currentUser, loading } = useAuth()
     const { cart, clearCart } = useCart()
     const { currency, formatPrice, convertPrice } = useCurrency()
     const [step, setStep] = useState(1)
@@ -301,6 +303,14 @@ export function CheckoutPage() {
 
     if (cart.length === 0) {
         return null; // Redirecting...
+    }
+
+    if (loading) {
+        return null; // Wait for auth to resolve
+    }
+
+    if (!currentUser) {
+        return <Navigate to="/login" state={{ from: '/checkout' }} replace />;
     }
 
     return (

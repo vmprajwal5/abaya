@@ -11,13 +11,16 @@ const API = axios.create({
 // 2. The "Interceptor" (The Magic)
 // Before every request, check if we have a token in localStorage.
 // If yes, attach it to the header.
-API.interceptors.request.use((req) => {
-    if (localStorage.getItem('userInfo')) {
-        const { token } = JSON.parse(localStorage.getItem('userInfo'));
-        req.headers.Authorization = `Bearer ${token}`;
-    }
-    return req;
-});
+API.interceptors.request.use(
+    (req) => {
+        const token = localStorage.getItem('authToken') || (localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')).token : null);
+        if (token) {
+            req.headers.Authorization = `Bearer ${token}`;
+        }
+        return req;
+    },
+    (error) => Promise.reject(error)
+);
 
 // 3. API Endpoints
 
