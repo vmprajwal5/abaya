@@ -38,6 +38,8 @@ const addOrderItems = async (req, res) => {
                 tax: taxPrice,
                 shippingCost: shippingPrice,
                 total: totalPrice,
+                currency: req.body.currency || 'MVR',
+                notes: req.body.notes || ''
             });
 
             const createdOrder = await order.save();
@@ -45,8 +47,8 @@ const addOrderItems = async (req, res) => {
             res.status(201).json(createdOrder);
         }
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server Error', error: error.message });
+        console.error('Order creation error:', error);
+        res.status(500).json({ message: error.message || 'Server Error', error: error.toString() });
     }
 };
 
