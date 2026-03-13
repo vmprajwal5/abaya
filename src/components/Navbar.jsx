@@ -28,11 +28,11 @@ function Navbar() {
                 </div>
             )}
             <nav className="sticky top-0 z-50 bg-white border-b border-gray-100">
-                <div className="max-w-[1400px] mx-auto px-6 md:px-12">
-                    <div className="flex items-center justify-between h-20">
+                <div className="max-w-[1400px] mx-auto px-4 md:px-12">
+                    <div className="flex items-center justify-between h-16 md:h-20">
                         {/* Logo */}
-                        <div className="flex-shrink-0">
-                            <a href="/" className="text-2xl font-light tracking-[0.1em] uppercase text-black">
+                        <div className="flex-shrink-0 min-w-0">
+                            <a href="/" className="text-lg md:text-2xl font-light tracking-[0.06em] md:tracking-[0.1em] uppercase text-black">
                                 Abaya Clothing
                             </a>
                         </div>
@@ -47,11 +47,11 @@ function Navbar() {
                         </div>
 
                         {/* Right Side Icons */}
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
                             {/* Currency Switcher */}
                             <CurrencySwitcher />
 
-                            <div className="h-4 w-px bg-gray-200 mx-2 hidden sm:block"></div>
+                            <div className="h-4 w-px bg-gray-200 hidden sm:block"></div>
 
                             {/* Search Icon */}
                             <button

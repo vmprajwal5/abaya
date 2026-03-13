@@ -5,6 +5,19 @@
 @tailwind utilities;
 
 @layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
   body {
     @apply font-sans text-gray-600 bg-white antialiased;
     line-height: 1.6;
