@@ -141,6 +141,7 @@ export function CheckoutPage() {
     const [step, setStep] = useState(1)
     const [isProcessing, setIsProcessing] = useState(false)
     const [showOrderSummary, setShowOrderSummary] = useState(false)
+    const [error, setError] = useState(''); // Added error state
 
     // Form Setup
     const form = useForm({
@@ -229,6 +230,7 @@ export function CheckoutPage() {
 
     const onSubmit = async (data) => {
         setIsProcessing(true)
+        setError('') // Clear any previous errors
         try {
             // "The Smooth Flow" - Payment Method Check
             // (Validated by Zod Schema already, but extra safety check)
@@ -280,13 +282,18 @@ export function CheckoutPage() {
 
             navigate(`/order-success?orderId=${createdOrder._id}`)
         } catch (error) {
-            console.error("Order failed:", error)
-            // Fix: Show specific error from backend
-            const errorMessage = error.response && error.response.data && error.response.data.message
-                ? error.response.data.message
-                : error.message || "Failed to place order";
+            console.error('Checkout error:', error);
 
-            alert(errorMessage); // Using alert as requested/planned
+            // Better error handling
+            if (error.message === 'Network Error') {
+                setError('Cannot connect to server. Please check your internet connection.');
+            } else if (error.response?.status === 404) {
+                setError('Order endpoint not found. Please contact support.');
+            } else if (error.response?.data?.message) {
+                setError(error.response.data.message);
+            } else {
+                setError('Failed to process order. Please try again.');
+            }
         } finally {
             setIsProcessing(false)
         }
@@ -735,13 +742,20 @@ export function CheckoutPage() {
 
                                 <div className="pt-6 border-t flex flex-col-reverse md:flex-row justify-between items-center gap-4">
                                     <Button type="button" variant="ghost" onClick={prevStep} className="w-full md:w-auto">Back</Button>
-                                    <Button
-                                        type="submit"
-                                        disabled={isProcessing}
-                                        className="w-full md:w-auto bg-secondary text-white px-10 py-4 rounded-md hover:bg-primary transition-all text-lg shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
-                                    >
-                                        {isProcessing ? "Processing..." : `Place Order - ${formatMVR(totalMVR)}`}
-                                    </Button>
+                                    <div className="flex flex-col items-center gap-2 w-full md:w-auto">
+                                        {error && (
+                                            <div className="text-red-500 text-sm mb-2 text-center bg-red-50 p-2 rounded border border-red-200 w-full">
+                                                {error}
+                                            </div>
+                                        )}
+                                        <Button
+                                            type="submit"
+                                            disabled={isProcessing}
+                                            className="w-full bg-secondary text-white px-10 py-4 rounded-md hover:bg-primary transition-all text-lg shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
+                                        >
+                                            {isProcessing ? "Processing..." : `Place Order - ${formatMVR(totalMVR)}`}
+                                        </Button>
+                                    </div>
                                 </div>
                             </motion.div>
                         )}
