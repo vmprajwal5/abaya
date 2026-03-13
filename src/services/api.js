@@ -130,4 +130,11 @@ export const uploadAPI = {
     }
 };
 
+export const orderAPI = {
+    getOrder: async (id) => {
+        const { data } = await API.get(`/orders/${id}`);
+        return data;
+    }
+};
+
 export default API;

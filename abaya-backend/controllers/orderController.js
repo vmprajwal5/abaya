@@ -122,4 +122,24 @@ const getOrderStats = async (req, res) => {
     }
 };
 
-module.exports = { addOrderItems, getOrders, updateOrderToDelivered, getOrderStats };
+const getOrderById = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id).populate('user', 'name email');
+        
+        if (order) {
+            // Ensure the user is an admin or the owner of the order
+            if (req.user && (req.user.isAdmin || req.user._id.toString() === order.user._id.toString())) {
+                res.json(order);
+            } else {
+                res.status(401).json({ message: 'Not authorized to view this order' });
+            }
+        } else {
+            res.status(404).json({ message: 'Order not found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error', error: error.message });
+    }
+};
+
+module.exports = { addOrderItems, getOrders, getOrderById, updateOrderToDelivered, getOrderStats };

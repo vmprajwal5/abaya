@@ -1,106 +1,196 @@
-import { useEffect, useState } from "react"
-import { Link, useSearchParams } from "react-router-dom"
-import { Check, ArrowRight, MapPin } from "lucide-react"
-import { Button } from "../components/ui/button"
-import confetti from "canvas-confetti"
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { orderAPI } from '../services/api';
 
 export function OrderSuccessPage() {
-    const [searchParams] = useSearchParams()
-    const [orderId] = useState(() => searchParams.get("orderId") || "AB-" + Math.random().toString(36).substr(2, 6).toUpperCase())
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    // Trigger confetti on mount
-    useEffect(() => {
-        const duration = 3 * 1000
-        const animationEnd = Date.now() + duration
-        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 }
+  const orderId = new URLSearchParams(location.search).get('orderId');
 
-        const randomInRange = (min, max) => Math.random() * (max - min) + min
+  useEffect(() => {
+    if (!orderId) {
+      navigate('/');
+      return;
+    }
+    fetchOrder();
+  }, [orderId]);
 
-        const interval = window.setInterval(() => {
-            const timeLeft = animationEnd - Date.now()
+  const fetchOrder = async () => {
+    try {
+      const response = await orderAPI.getOrder(orderId);
+      setOrder(response.data || response); // Handle varying response structures
+    } catch (error) {
+      console.error('Failed to fetch order:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            if (timeLeft <= 0) {
-                return clearInterval(interval)
-            }
-
-            const particleCount = 50 * (timeLeft / duration)
-            confetti({
-                ...defaults,
-                particleCount,
-                origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
-            })
-            confetti({
-                ...defaults,
-                particleCount,
-                origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
-            })
-        }, 250)
-
-        return () => clearInterval(interval)
-    }, [])
-
+  if (loading) {
     return (
-        <div className="min-h-screen bg-white pt-32 pb-20">
-            <div className="container max-w-2xl text-center space-y-8 animate-fade-in">
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-xl">Loading order details...</div>
+      </div>
+    );
+  }
 
-                {/* Success Icon */}
-                <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8 animate-scale-in">
-                    <Check className="w-12 h-12 text-green-600" />
-                </div>
-
-                <div className="space-y-4">
-                    <h1 className="text-4xl font-serif text-primary">Order Confirmed!</h1>
-                    <p className="text-gray-500 text-lg">
-                        Thank you for your purchase. We have received your order.
-                    </p>
-                </div>
-
-                <div className="bg-gray-50 p-8 rounded-lg text-left space-y-6 border border-gray-100 shadow-sm mt-8">
-                    <div className="flex justify-between items-center border-b border-gray-200 pb-4">
-                        <span className="text-gray-500">Order Number</span>
-                        <span className="font-mono font-bold text-lg text-primary">{orderId}</span>
-                    </div>
-
-                    <div className="space-y-4">
-                        <h3 className="font-bold flex items-center gap-2">
-                            <MapPin className="w-4 h-4 text-secondary" />
-                            Shipping To
-                        </h3>
-                        <p className="text-gray-600 text-sm leading-relaxed">
-                            {/* Mock data or retrieved from state if we fully implemented persistence */}
-                            Fathimath Sarah<br />
-                            H. Moonlit Rose, 4th Floor<br />
-                            Majeedhee Magu<br />
-                            Male&apos;, 20057<br />
-                            Maldives
-                        </p>
-                    </div>
-
-                    <div className="space-y-4 pt-4 border-t border-gray-200">
-                        <div className="flex justify-between items-center text-sm">
-                            <span className="text-gray-500">Estimated Delivery</span>
-                            <span className="font-medium">3-5 Business Days</span>
-                        </div>
-                        <div className="flex justify-between items-center text-sm">
-                            <span className="text-gray-500">Payment Method</span>
-                            <span className="font-medium">Cash on Delivery</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-                    <Link to="/track-order">
-                        <Button variant="outline" className="w-full sm:w-auto min-w-[200px]">
-                            Track Your Order
-                        </Button>
-                    </Link>
-                    <Link to="/">
-                        <Button className="w-full sm:w-auto min-w-[200px] bg-secondary text-white hover:bg-primary">
-                            Continue Shopping <ArrowRight className="w-4 h-4 ml-2" />
-                        </Button>
-                    </Link>
-                </div>
-            </div>
+  if (!order) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Order Not Found</h2>
+          <Link to="/" className="text-blue-600 hover:underline">
+            Return to Home
+          </Link>
         </div>
-    )
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="max-w-3xl mx-auto">
+        {/* Success Icon */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-green-100 rounded-full mb-4">
+            <svg className="w-12 h-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h1 className="text-4xl font-bold mb-2">Order Confirmed!</h1>
+          <p className="text-gray-600 text-lg">
+            Thank you for your purchase. We have received your order.
+          </p>
+        </div>
+
+        {/* Order Details Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <div className="border-b pb-4 mb-4">
+            <h2 className="text-sm text-gray-600">Order Number</h2>
+            <p className="text-xl font-mono font-semibold">{order.orderNumber || order._id}</p>
+          </div>
+
+          {/* Shipping Address */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-2 flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Shipping To
+            </h3>
+            <div className="ml-7 text-gray-700">
+              <p className="font-semibold">{order.shippingAddress?.fullName || order.shippingAddress?.address || ""}</p>
+              <p>{order.shippingAddress?.addressLine1 || order.shippingAddress?.address || ""}</p>
+              {order.shippingAddress?.addressLine2 && (
+                <p>{order.shippingAddress.addressLine2}</p>
+              )}
+              <p>
+                {order.shippingAddress?.city}, {order.shippingAddress?.state || ""} {order.shippingAddress?.postalCode}
+              </p>
+              <p>{order.shippingAddress?.country || "Maldives"}</p>
+              <p className="mt-2 text-sm text-gray-600">
+                Phone: {order.shippingAddress?.phone || order.shippingAddress?.phoneNo || ""}
+              </p>
+            </div>
+          </div>
+
+          {/* Order Items */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3">Order Items</h3>
+            <div className="space-y-3">
+              {order.items?.map((item, index) => (
+                <div key={index} className="flex items-center justify-between border-b pb-3">
+                  <div className="flex items-center gap-4">
+                    {item.image && (
+                      <img 
+                        src={item.image} 
+                        alt={item.name}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    )}
+                    <div>
+                      <p className="font-semibold">{item.name}</p>
+                      <p className="text-sm text-gray-600">
+                        {item.size && `Size: ${item.size}`}
+                        {item.color && ` | Color: ${item.color}`}
+                      </p>
+                      <p className="text-sm text-gray-600">Qty: {item.qty || item.quantity}</p>
+                    </div>
+                  </div>
+                  <p className="font-semibold">MVR {item.price * (item.qty || item.quantity)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Order Summary */}
+          <div className="border-t pt-4">
+            <div className="space-y-2">
+              <div className="flex justify-between text-gray-600">
+                <span>Subtotal</span>
+                <span>MVR {order.subtotal?.toFixed(2) || order.itemsPrice?.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span>Shipping</span>
+                <span>MVR {order.shippingCost?.toFixed(2) || order.shippingPrice?.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span>Tax</span>
+                <span>MVR {order.tax?.toFixed(2) || order.taxPrice?.toFixed(2)}</span>
+              </div>
+              {order.discountAmount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Discount</span>
+                  <span>-MVR {order.discountAmount?.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-xl font-bold border-t pt-2">
+                <span>Total</span>
+                <span>MVR {order.total?.toFixed(2) || order.totalPrice?.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Payment Method */}
+          <div className="mt-6 p-4 bg-gray-50 rounded">
+            <p className="text-sm text-gray-600">Payment Method</p>
+            <p className="font-semibold">{order.paymentMethod}</p>
+            <p className="text-sm text-gray-600 mt-1">
+              Status: <span className="text-orange-600">{order.paymentStatus || (order.isPaid ? 'Paid' : 'Pending')}</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-4 flex-wrap">
+          <Link
+            to="/profile"
+            className="flex-1 bg-black text-white py-3 px-6 rounded-lg text-center hover:bg-gray-800 transition"
+          >
+            View My Orders
+          </Link>
+          <Link
+            to="/"
+            className="flex-1 bg-white text-black border-2 border-black py-3 px-6 rounded-lg text-center hover:bg-gray-50 transition"
+          >
+            Continue Shopping
+          </Link>
+        </div>
+
+        {/* Additional Info */}
+        <div className="mt-8 text-center text-sm text-gray-600">
+          <p>We've sent a confirmation email to your registered email address.</p>
+          <p className="mt-2">
+            Questions? <Link to="/contact" className="text-blue-600 hover:underline">Contact us</Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
+
+export default OrderSuccessPage;
