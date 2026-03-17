@@ -21,6 +21,7 @@ const OrderSuccessPage = lazy(() => import("./pages/OrderSuccessPage").then(modu
 
 // Auth Pages
 const Login = lazy(() => import("./pages/Login"))
+const Register = lazy(() => import("./pages/Register"))
 const Signup = lazy(() => import("./pages/Signup"))
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"))
 const Profile = lazy(() => import("./pages/Profile"))
@@ -110,6 +111,7 @@ function App() {
                                                     {/* Auth Routes */}
                                                     <Route path="/login" element={<Login />} />
                                                     <Route path="/signup" element={<Signup />} />
+                                                    <Route path="/register" element={<Register />} />
                                                     <Route path="/forgot-password" element={<ForgotPassword />} />
                                                     <Route
                                                         path="/profile"

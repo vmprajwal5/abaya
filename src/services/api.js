@@ -16,7 +16,7 @@ const api = axios.create({
 // Request interceptor - Add logging
 api.interceptors.request.use(
   (config) => {
-    console.log(`🚀 API Request: ${config.method.toUpperCase()} ${config.url}`);
+    // console.log(`🚀 API Request: ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => {
@@ -28,7 +28,7 @@ api.interceptors.request.use(
 // Response interceptor - Handle errors globally
 api.interceptors.response.use(
   (response) => {
-    console.log(`✅ API Response: ${response.config.url}`, response.data);
+    // console.log(`✅ API Response: ${response.config.url}`, response.data);
     return response.data;
   },
   (error) => {
@@ -56,7 +56,7 @@ api.interceptors.response.use(
     switch (status) {
       case 400:
         // Bad Request - validation errors
-        console.log('Validation Error:', data);
+        // console.log('Validation Error:', data);
         break;
 
       case 401:
@@ -73,33 +73,33 @@ api.interceptors.response.use(
 
       case 403:
         // Forbidden - user doesn't have permission
-        console.log('Forbidden:', data.message);
+        // console.log('Forbidden:', data.message);
         break;
 
       case 404:
         // Not Found
-        console.log('Not Found:', data.message);
+        // console.log('Not Found:', data.message);
         break;
 
       case 423:
         // Locked - account locked
-        console.log('Account Locked:', data.message);
+        // console.log('Account Locked:', data.message);
         break;
 
       case 429:
         // Too Many Requests - rate limited
-        console.log('Rate Limited:', data.message);
+        // console.log('Rate Limited:', data.message);
         break;
 
       case 500:
       case 502:
       case 503:
         // Server Error
-        console.log('Server Error:', data.message);
+        // console.log('Server Error:', data.message);
         break;
 
       default:
-        console.log('Unknown Error:', status, data);
+        // console.log('Unknown Error:', status, data);
     }
 
     // Return error with response data

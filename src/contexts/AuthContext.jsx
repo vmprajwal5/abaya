@@ -15,14 +15,20 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const checkAuth = async () => {
-            const token = localStorage.getItem('authToken');
-            if (token) {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
                 try {
-                    const user = await authAPI.getCurrentUser();
-                    setCurrentUser(user);
+                    // Verify session is still valid with the server
+                    const response = await authAPI.getMe();
+                    if (response && response.data) {
+                        setCurrentUser(response.data);
+                    } else {
+                        setCurrentUser(JSON.parse(storedUser));
+                    }
                 } catch (error) {
                     console.error('Auth check failed:', error);
-                    localStorage.removeItem('authToken');
+                    // Session expired or invalid — clear stored user
+                    localStorage.removeItem('user');
                 }
             }
             setLoading(false);
