@@ -1,50 +1,52 @@
 const mongoose = require('mongoose');
-const { hashPassword, comparePassword } = require('../utils/passwordValidator');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Please add a name'],
+    required: [true, 'Please provide a name'],
     trim: true,
-    maxlength: [50, 'Name cannot be more than 50 characters'],
   },
   email: {
     type: String,
-    required: [true, 'Please add an email'],
+    required: [true, 'Please provide an email'],
     unique: true,
     lowercase: true,
     trim: true,
-    match: [
-      /^\S+@\S+\.\S+$/,
-      'Please add a valid email',
-    ],
   },
   password: {
     type: String,
-    required: [true, 'Please add a password'],
+    required: [true, 'Please provide a password'],
     minlength: [6, 'Password must be at least 6 characters'],
     select: false, // Don't return password by default
+  },
+  phone: {
+    type: String,
+    default: '',
+    validate: {
+      validator: function(v) {
+        // Allow empty OR exactly 10 digits
+        if (!v || v === '') return true;
+        return /^\d{10}$/.test(v);
+      },
+      message: 'Phone number must be 10 digits'
+    }
   },
   role: {
     type: String,
     enum: ['user', 'admin'],
     default: 'user',
   },
-  phone: {
-    type: String,
-    match: [/^(?:\d{10})?$/, 'Please add a valid 10-digit phone number'],
-  },
   addresses: [{
-    label: String,
-    fullName: String,
-    phone: String,
-    addressLine1: String,
-    addressLine2: String,
+    street: String,
     city: String,
     state: String,
     postalCode: String,
-    country: { type: String, default: 'India' },
-    isDefault: { type: Boolean, default: false },
+    country: String,
+    isDefault: {
+      type: Boolean,
+      default: false,
+    },
   }],
   wishlist: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -54,21 +56,6 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  emailVerified: {
-    type: Boolean,
-    default: false,
-  },
-  emailVerificationToken: String,
-  emailVerificationExpire: Date,
-  passwordResetToken: String,
-  passwordResetExpire: Date,
-  passwordChangedAt: Date,
-  lastLogin: Date,
-  loginAttempts: {
-    type: Number,
-    default: 0,
-  },
-  lockUntil: Date,
   createdAt: {
     type: Date,
     default: Date.now,
@@ -77,8 +64,6 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-}, {
-  timestamps: true,
 });
 
 // Hash password before saving
@@ -89,44 +74,27 @@ userSchema.pre('save', async function(next) {
   }
 
   try {
-    this.password = await hashPassword(this.password);
-    
-    // Set password changed timestamp
-    if (!this.isNew) {
-      this.passwordChangedAt = Date.now() - 1000; // Subtract 1 sec for JWT timing
-    }
-    
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (error) {
     next(error);
   }
 });
 
-// Method to compare passwords
-userSchema.methods.comparePassword = async function(enteredPassword) {
-  return await comparePassword(enteredPassword, this.password);
-};
-
-// Method to generate JWT token
-userSchema.methods.getSignedJwtToken = function() {
-  const jwt = require('jsonwebtoken');
-  return jwt.sign(
-    { id: this._id, role: this.role },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRE || '30d' }
-  );
-};
-
-// Check if password was changed after JWT was issued
-userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
-  if (this.passwordChangedAt) {
-    const changedTimestamp = parseInt(
-      this.passwordChangedAt.getTime() / 1000,
-      10
-    );
-    return JWTTimestamp < changedTimestamp;
+// Compare password method - CRITICAL FOR LOGIN
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  try {
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (error) {
+    throw new Error('Password comparison failed');
   }
-  return false;
 };
+
+// Update timestamp on save
+userSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
+});
 
 module.exports = mongoose.model('User', userSchema);
