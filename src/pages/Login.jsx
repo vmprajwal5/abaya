@@ -58,9 +58,16 @@ export default function Login() {
                 navigate('/', { replace: true });
             }
         } catch (err) {
-            // Capture error.response.data.message
-            const errorMessage = err.response?.data?.message || err.message || "Invalid Email or Password";
-            setError(errorMessage);
+            if (err.response?.status === 423) {
+                const lockTime = new Date(err.response.data.lockUntil).toLocaleTimeString();
+                setError(`${err.response.data.message} Try again after: ${lockTime}`);
+            } else {
+                let errorMessage = err.response?.data?.message || err.message || "Invalid Email or Password";
+                if (err.response?.data?.remainingAttempts) {
+                    errorMessage += ` ${err.response.data.remainingAttempts} attempts remaining.`;
+                }
+                setError(errorMessage);
+            }
         } finally {
             setIsLoading(false);
         }
@@ -76,7 +83,7 @@ export default function Login() {
 
                 {/* Red Alert Box */}
                 {error && (
-                    <div className="bg-red-50 text-red-600 p-4 mb-6 text-sm text-center border border-red-200 rounded-md shadow-sm font-medium animate-pulse">
+                    <div className={cn("p-4 mb-6 text-sm text-center border rounded-md shadow-sm font-medium animate-pulse", error.includes('locked') ? "bg-red-50 text-red-600 border-red-200" : "bg-orange-50 text-orange-600 border-orange-200")}>
                         ⚠️ {error}
                     </div>
                 )}
@@ -137,7 +144,7 @@ export default function Login() {
 
                     <Button
                         type="submit"
-                        disabled={isSubmitDisabled}
+                        disabled={isSubmitDisabled || error?.includes('locked')}
                         className="w-full h-12 bg-secondary text-white hover:bg-primary uppercase tracking-widest text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
                         {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sign In"}

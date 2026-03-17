@@ -1,140 +1,77 @@
 import axios from 'axios';
 
-// 1. Create the Axios Instance
-const API = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
-    headers: {
-        'Content-Type': 'application/json',
-    },
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: true, // CRITICAL: Send cookies with requests
 });
 
-// 2. The "Interceptor" (The Magic)
-// Before every request, check if we have a token in localStorage.
-// If yes, attach it to the header.
-API.interceptors.request.use(
-    (req) => {
-        const token = localStorage.getItem('authToken') || (localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')).token : null);
-        if (token) {
-            req.headers.Authorization = `Bearer ${token}`;
-        }
-        return req;
-    },
-    (error) => Promise.reject(error)
+// Response interceptor
+api.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    // Handle 401 Unauthorized
+    if (error.response?.status === 401) {
+      // Clear auth state
+      localStorage.removeItem('user');
+      
+      // Only redirect if not already on login page
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+      }
+    }
+
+    // Handle 423 Locked (account locked)
+    if (error.response?.status === 423) {
+      // Account is locked
+      return Promise.reject(error);
+    }
+
+    return Promise.reject(error);
+  }
 );
 
-// 3. API Endpoints
-
-// --- USER AUTH ---
-export const login = (email, password) => API.post('/users/login', { email, password });
-export const register = (name, email, password) => API.post('/users', { name, email, password });
-
-// --- PRODUCTS ---
-// keyword = search term, pageNumber = pagination (future proofing)
-export const fetchProducts = (keyword = '') => API.get(`/products?keyword=${keyword}`);
-export const fetchProductDetails = (id) => API.get(`/products/${id}`);
-
-// --- ORDERS ---
-export const createOrder = (orderData) => API.post('/orders', orderData);
-
-// --- UPLOAD ---
-export const uploadImage = async (imageFile) => {
-    const formData = new FormData();
-    formData.append('image', imageFile);
-
-    const config = {
-        headers: {
-            'Content-Type': 'multipart/form-data', // Crucial for files
-        },
-    };
-
-    const { data } = await API.post('/upload', formData, config);
-    return data; // Returns the image path string
-};
-
-// --- ADMIN USERS ---
-export const getUsers = () => API.get('/users');
-export const deleteUser = (id) => API.delete(`/users/${id}`);
-
-// --- ADMIN PRODUCTS ---
-export const deleteProduct = (id) => API.delete(`/products/${id}`);
-export const createProduct = (productData) => API.post('/products', productData);
-export const updateProduct = (product) => API.put(`/products/${product._id}`, product);
-
-// --- ADMIN ORDERS ---
-export const getOrders = () => API.get('/orders');
-export const deliverOrder = (id) => API.put(`/orders/${id}/deliver`);
-export const getOrderStats = () => API.get('/orders/stats');
-
-// --- NEWSLETTER ---
-export const getSubscribers = () => API.get('/newsletter');
-export const subscribeToNewsletter = (email) => API.post('/newsletter', { email });
-
-// --- LEGACY EXPORTS (Restoring compatibility) ---
-
+// Auth API
 export const authAPI = {
-    login: async ({ email, password }) => {
-        const { data } = await API.post('/users/login', { email, password });
-        if (data) {
-            localStorage.setItem('userInfo', JSON.stringify(data));
-            localStorage.setItem('authToken', data.token);
-        }
-        return data;
-    },
-    register: async ({ name, email, password }) => {
-        const { data } = await API.post('/users', { name, email, password });
-        if (data) {
-            localStorage.setItem('userInfo', JSON.stringify(data));
-            localStorage.setItem('authToken', data.token);
-        }
-        return data;
-    },
-    getCurrentUser: async () => {
-        // Backend missing /me route, fallback to local storage
-        const userInfo = localStorage.getItem('userInfo');
-        return userInfo ? JSON.parse(userInfo) : null;
-    },
-    logout: () => {
-        localStorage.removeItem('userInfo');
-        localStorage.removeItem('authToken');
-    }
+  register: (data) => api.post('/auth/register', data),
+  login: (data) => api.post('/auth/login', data),
+  logout: () => api.post('/auth/logout'),
+  getMe: () => api.get('/auth/me'),
+  changePassword: (data) => api.put('/auth/password', data),
 };
 
-export const productsAPI = {
-    getAll: async () => {
-        const { data } = await API.get('/products');
-        // Handle various response structures
-        if (Array.isArray(data)) return data;
-        if (data.products) return data.products;
-        return [];
-    },
-    getById: async (id) => {
-        const { data } = await API.get(`/products/${id}`);
-        return data;
-    }
+// Product API
+export const productAPI = {
+  getAll: (params) => api.get('/products', { params }),
+  getOne: (id) => api.get(`/products/${id}`),
+  getFeatured: () => api.get('/products/featured'),
+  getNewArrivals: () => api.get('/products/new-arrivals'),
+  getBestSellers: () => api.get('/products/best-sellers'),
 };
 
-export const ordersAPI = {
-    create: async (orderData) => {
-        const { data } = await API.post('/orders', orderData);
-        return data;
-    }
-};
-
-export const uploadAPI = {
-    upload: async (file) => {
-        const formData = new FormData();
-        formData.append('image', file);
-        const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-        const { data } = await API.post('/upload', formData, config);
-        return data;
-    }
-};
-
+// Order API
 export const orderAPI = {
-    getOrder: async (id) => {
-        const { data } = await API.get(`/orders/${id}`);
-        return data;
-    }
+  create: (data) => api.post('/orders', data),
+  getMyOrders: () => api.get('/orders/my-orders'),
+  getOne: (id) => api.get(`/orders/${id}`),
+  cancel: (id) => api.put(`/orders/${id}/cancel`),
 };
 
-export default API;
+// Cart API
+export const cartAPI = {
+  get: () => api.get('/cart'),
+  addItem: (data) => api.post('/cart/items', data),
+  updateItem: (id, data) => api.put(`/cart/items/${id}`, data),
+  removeItem: (id) => api.delete(`/cart/items/${id}`),
+  clear: () => api.delete('/cart'),
+};
+
+// Admin API
+export const getUsers = () => api.get('/users');
+export const deleteUser = (id) => api.delete(`/users/${id}`);
+
+export default api;

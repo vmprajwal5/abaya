@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { signupSchema } from "../utils/validation";
 import { Button } from "../components/ui/button";
 import { cn } from "../lib/utils";
+import PasswordStrength from "../components/PasswordStrength";
 
 export default function Signup() {
     const [showPassword, setShowPassword] = useState(false);
@@ -42,9 +43,15 @@ export default function Signup() {
             toast.success("Registration Successful!");
             navigate("/"); // Redirect to home after signup
         } catch (err) {
-            const errorMessage = err.response?.data?.message || err.message || "Failed to create account";
-            setError(errorMessage);
-            toast.error(errorMessage);
+            if (err.response?.data?.errors) {
+                const msgs = err.response.data.errors.join(". ");
+                setError(msgs);
+                toast.error(msgs);
+            } else {
+                const errorMessage = err.response?.data?.message || err.message || "Failed to create account";
+                setError(errorMessage);
+                toast.error(errorMessage);
+            }
         } finally {
             setIsLoading(false);
         }
@@ -124,22 +131,7 @@ export default function Signup() {
                         </div>
 
                         {/* Password Strength Indicator */}
-                        {password && (
-                            <div className="mt-2 grid grid-cols-2 gap-1 text-[10px] text-gray-500">
-                                <div className={cn("flex items-center gap-1", hasMinLength ? "text-green-600" : "")}>
-                                    {hasMinLength ? <Check size={10} /> : <div className="w-2.5 h-2.5 rounded-full bg-gray-200" />} 8+ chars
-                                </div>
-                                <div className={cn("flex items-center gap-1", hasUpper ? "text-green-600" : "")}>
-                                    {hasUpper ? <Check size={10} /> : <div className="w-2.5 h-2.5 rounded-full bg-gray-200" />} Uppercase
-                                </div>
-                                <div className={cn("flex items-center gap-1", hasLower ? "text-green-600" : "")}>
-                                    {hasLower ? <Check size={10} /> : <div className="w-2.5 h-2.5 rounded-full bg-gray-200" />} Lowercase
-                                </div>
-                                <div className={cn("flex items-center gap-1", hasNumber ? "text-green-600" : "")}>
-                                    {hasNumber ? <Check size={10} /> : <div className="w-2.5 h-2.5 rounded-full bg-gray-200" />} Number
-                                </div>
-                            </div>
-                        )}
+                        <PasswordStrength password={password} />
                         {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
                     </div>
 
