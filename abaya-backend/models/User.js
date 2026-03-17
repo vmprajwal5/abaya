@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    match: [/^\d{10}$/, 'Please add a valid 10-digit phone number'],
+    match: [/^(?:\d{10})?$/, 'Please add a valid 10-digit phone number'],
   },
   addresses: [{
     label: String,
@@ -103,7 +103,7 @@ userSchema.pre('save', async function(next) {
 });
 
 // Method to compare passwords
-userSchema.methods.matchPassword = async function(enteredPassword) {
+userSchema.methods.comparePassword = async function(enteredPassword) {
   return await comparePassword(enteredPassword, this.password);
 };
 
