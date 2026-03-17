@@ -74,7 +74,7 @@ function ProfileSettings() {
     const handleSave = (e) => {
         e.preventDefault()
         alert("Profile update logic needs to be connected to backend API if available.")
-        // TODO: Implement update profile API call
+        // Implement update profile API call
     }
 
     return (
@@ -120,7 +120,7 @@ function SecuritySettings() {
             return
         }
         alert("Password change logic needs to be connected to backend API.")
-        // TODO: Implement change password API call
+        // Implement change password API call
     }
 
     return (

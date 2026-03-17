@@ -211,6 +211,7 @@ export function ProductDetails() {
                         <img
                             src={product.images?.[activeImage] || '/placeholder.jpg'}
                             alt={product.name}
+                            onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder.jpg'; }}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-125 origin-center"
                         />
                     </div>
@@ -224,7 +225,7 @@ export function ProductDetails() {
                                     activeImage === idx ? "border-secondary" : "border-transparent hover:border-gray-200"
                                 )}
                             >
-                                <img src={img} alt="" className="w-full h-full object-cover" />
+                                <img src={img || '/placeholder.jpg'} onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder.jpg'; }} alt="" className="w-full h-full object-cover" />
                             </button>
                         ))}
                     </div>
@@ -233,7 +234,7 @@ export function ProductDetails() {
                     <div className="lg:hidden -mx-4 overflow-x-auto snap-x snap-mandatory flex scrollbar-hide">
                         {product.images?.map((img, idx) => (
                             <div key={idx} className="snap-center flex-shrink-0 w-[85vw] mx-2 first:ml-4 last:mr-4 aspect-[3/4] bg-gray-100 rounded-sm overflow-hidden">
-                                <img src={img} alt={product.name} className="w-full h-full object-cover" />
+                                <img src={img || '/placeholder.jpg'} onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder.jpg'; }} alt={product.name} className="w-full h-full object-cover" />
                             </div>
                         ))}
                     </div>

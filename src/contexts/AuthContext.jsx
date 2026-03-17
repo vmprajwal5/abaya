@@ -37,20 +37,28 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
-        const user = await authAPI.login({ email, password });
-        setCurrentUser(user);
-        return user;
+        const response = await authAPI.login({ email, password });
+        if (response && response.user) {
+            setCurrentUser(response.user);
+            localStorage.setItem('user', JSON.stringify(response.user));
+        }
+        return response;
     };
 
-    const signup = async (name, email, password) => {
-        const user = await authAPI.register({ name, email, password });
-        setCurrentUser(user);
-        return user;
+    const signup = async (name, email, password, phone) => {
+        const response = await authAPI.register({ name, email, password, phone });
+        if (response && response.user) {
+            setCurrentUser(response.user);
+            localStorage.setItem('user', JSON.stringify(response.user));
+        }
+        return response;
     };
 
     const logout = () => {
         authAPI.logout();
         setCurrentUser(null);
+        localStorage.removeItem('user');
+        localStorage.removeItem('userInfo'); // Cleanup old admin user tokens
     };
 
     const value = { currentUser, loading, login, signup, logout };

@@ -60,7 +60,12 @@ exports.securityHeaders = {
       scriptSrc: ["'self'", "'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", 'data:', 'https:'],
-      connectSrc: ["'self'", process.env.FRONTEND_URL],
+      connectSrc: [
+        "'self'", 
+        "https://abaya-xnxa.vercel.app", 
+        "http://localhost:5173",
+        process.env.FRONTEND_URL
+      ].filter(Boolean),
       fontSrc: ["'self'"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],

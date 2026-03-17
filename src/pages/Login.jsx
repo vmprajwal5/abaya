@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { authAPI } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Login() {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
@@ -88,24 +90,17 @@ export default function Login() {
     try {
       setLoading(true);
 
-      console.log('🔐 Attempting login for:', formData.email);
-
-      const response = await authAPI.login({
-        email: formData.email.toLowerCase().trim(),
-        password: formData.password,
-      });
-
-      console.log('✅ Login successful:', response);
+      const response = await login(
+        formData.email.toLowerCase().trim(),
+        formData.password
+      );
 
       // Dismiss loading toast
       toast.dismiss(loadingToast);
 
       // Check response
       if (response && response.success) {
-        // Store user info (token is in httpOnly cookie)
-        if (response.user) {
-          localStorage.setItem('user', JSON.stringify(response.user));
-        }
+        // State and localStorage are handled by AuthContext
 
         // Show success message
         toast.success(`Welcome back, ${response.user?.name || 'User'}! 🎉`, {
@@ -136,9 +131,7 @@ export default function Login() {
       if (error.response) {
         const { status, data } = error.response;
 
-        console.log('Error status:', status);
-        console.log('Error data:', data);
-
+        // Removed debug logs
         switch (status) {
           case 400:
             // Bad Request - validation error
@@ -174,7 +167,7 @@ export default function Login() {
             if (data.lockUntil) {
               const lockDate = new Date(data.lockUntil);
               const now = new Date();
-              const minutesRemaining = Math.ceil((lockDate - now) / 60000);
+              const minutesRemaining = Math.ceil((lockDate.getTime() - now.getTime()) / 60000);
               errorMsg = `Account locked due to too many failed login attempts. Please try again in ${minutesRemaining} minute(s).`;
             } else {
               errorMsg = data.message || 'Account temporarily locked. Please try again later.';

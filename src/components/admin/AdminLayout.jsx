@@ -1,9 +1,13 @@
 import { Navigate, Outlet } from "react-router-dom"
 import { AdminSidebar } from "./AdminSidebar"
+import { useAuth } from "../../contexts/AuthContext"
 
 export function AdminLayout({ children = null }) {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null")
-    const isAuthenticated = userInfo && userInfo.isAdmin
+    const { currentUser, loading } = useAuth()
+    
+    if (loading) return null;
+
+    const isAuthenticated = currentUser && currentUser.role === 'admin'
 
     if (!isAuthenticated) {
         return <Navigate to="/" replace />

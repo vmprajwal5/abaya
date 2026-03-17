@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { authAPI } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Register() {
+  const { signup } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
@@ -108,24 +110,17 @@ export default function Register() {
     try {
       setLoading(true);
 
-      console.log('🔐 Registering user:', formData.email);
-
-      const response = await authAPI.register({
-        name: formData.name.trim(),
-        email: formData.email.toLowerCase().trim(),
-        password: formData.password,
-        phone: formData.phone || undefined,
-      });
-
-      console.log('✅ Registration successful:', response);
+      const response = await signup(
+        formData.name.trim(),
+        formData.email.toLowerCase().trim(),
+        formData.password,
+        formData.phone || undefined
+      );
 
       toast.dismiss(loadingToast);
 
       if (response && response.success) {
-        // Store user
-        if (response.user) {
-          localStorage.setItem('user', JSON.stringify(response.user));
-        }
+        // State and localStorage are managed by AuthContext
 
         // Success message
         toast.success(`Welcome to Abaya Clothing, ${response.user?.name}! 🎉`, {
@@ -271,7 +266,7 @@ export default function Register() {
                 disabled={loading}
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-black sm:text-sm disabled:bg-gray-100"
                 placeholder="9876543210"
-                maxLength="10"
+                maxLength={10}
               />
             </div>
 

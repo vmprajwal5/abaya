@@ -1,13 +1,14 @@
 import { useState } from "react"
 import { useNavigate, useLocation, Navigate } from "react-router-dom"
 import { Lock, User, Loader2 } from "lucide-react"
-import { authAPI } from "../../services/api"
+import { useAuth } from "../../contexts/AuthContext"
 
 export function AdminLoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
     const [isLoading, setIsLoading] = useState(false)
+    const { login, logout, currentUser } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
     const from = location.state?.from?.pathname || "/admin/dashboard"
@@ -17,13 +18,12 @@ export function AdminLoginPage() {
         setError("")
         setIsLoading(true)
         try {
-            const data = await authAPI.login({ email, password })
-            if (data.isAdmin) {
+            const data = await login(email, password)
+            if (data.user && data.user.role === 'admin') {
                 navigate(from, { replace: true })
             } else {
                 setError("Access denied: Not an administrator")
-                // Optional: Logout if they logged in but aren't admin, to clear state
-                authAPI.logout()
+                logout()
             }
         } catch (err) {
             setError(err.message || "Invalid credentials")
@@ -32,8 +32,7 @@ export function AdminLoginPage() {
         }
     }
 
-    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null")
-    if (userInfo && userInfo.isAdmin) {
+    if (currentUser && currentUser.role === 'admin') {
         return <Navigate to="/admin/dashboard" replace />
     }
 

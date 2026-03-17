@@ -32,8 +32,12 @@ function Navbar() {
                     <div className="flex items-center justify-between h-16 md:h-20">
                         {/* Logo */}
                         <div className="flex-shrink-0 min-w-0">
-                            <a href="/" className="text-lg md:text-2xl font-light tracking-[0.06em] md:tracking-[0.1em] uppercase text-black">
-                                Abaya Clothing
+                            <a href="/" className="flex items-center gap-2 text-lg md:text-2xl font-light tracking-[0.06em] md:tracking-[0.1em] uppercase text-black">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="hidden sm:block">
+                                    <path d="M12 2L2 22h20L12 2z"/>
+                                    <path d="M12 10l-4 8h8l-4-8z"/>
+                                </svg>
+                                <span>Abaya Clothing</span>
                             </a>
                         </div>
 

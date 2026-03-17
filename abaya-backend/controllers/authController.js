@@ -58,7 +58,7 @@ exports.register = async (req, res) => {
       expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       httpOnly: true, // Prevent XSS attacks
       secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-      sameSite: 'strict', // CSRF protection
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', // CSRF protection, relaxed for local dev
     };
 
     res.status(201)
@@ -195,7 +195,7 @@ exports.login = async (req, res) => {
       expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
     };
 
     res.status(200)
@@ -330,7 +330,7 @@ exports.changePassword = async (req, res) => {
       expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
     };
 
     res.status(200)
