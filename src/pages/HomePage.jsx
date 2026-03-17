@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchProducts } from '../services/api';
+import { productAPI } from '../services/api';
 import ProductCard from '../components/ProductCard';
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
@@ -12,7 +12,7 @@ const HomePage = () => {
     useEffect(() => {
         const getProducts = async () => {
             try {
-                const { data } = await fetchProducts();
+                const data = await productAPI.getAll();
                 setProducts(Array.isArray(data) ? data : (data.products || []));
             } catch (err) {
                 setError(err.message || 'Failed to fetch products');

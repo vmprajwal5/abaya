@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { getSubscribers } from "../../services/api"
+import api from "../../services/api"
 import { Mail, Send, Loader2, Copy, Check } from "lucide-react"
 
 export function NewsletterPage() {
@@ -14,7 +14,7 @@ export function NewsletterPage() {
     const fetchSubscribers = async () => {
         setIsLoading(true)
         try {
-            const { data } = await getSubscribers()
+            const data = await api.get('/admin/newsletter')
             setSubscribers(data || [])
         } catch (error) {
             console.error("Failed to fetch subscribers", error)

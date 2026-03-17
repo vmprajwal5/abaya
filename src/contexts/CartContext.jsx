@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import useStoreSettings from '../hooks/useStoreSettings';
+import toast from 'react-hot-toast';
 
 export const CartContext = createContext(undefined);
 
@@ -107,15 +108,7 @@ export function CartProvider({ children }) {
 
     // Toast notification helper
     const showToast = (message) => {
-        // Simple toast - you can replace with a proper toast library
-        const toast = document.createElement('div');
-        toast.className = 'fixed top-4 right-4 bg-black text-white px-6 py-3 rounded-none shadow-none z-[9999] text-xs uppercase tracking-widest';
-        toast.textContent = message;
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-            toast.remove();
-        }, 3000);
+        toast.success(message);
     };
 
     // Validate cart before checkout

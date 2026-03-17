@@ -22,6 +22,22 @@ const app = express();
 // SECURITY MIDDLEWARE (ORDER MATTERS!)
 // ═══════════════════════════════════════════════════════════
 
+const { 
+  httpRequestLogger, 
+  requestId,
+  trackPerformance 
+} = require('./middleware/logging');
+const { logger } = require('./config/logger');
+
+// Request ID tracking
+app.use(requestId);
+
+// HTTP request logging
+app.use(httpRequestLogger);
+
+// Performance tracking
+app.use(trackPerformance);
+
 // 1. Set security HTTP headers
 app.use(helmet(securityHeaders));
 
@@ -54,10 +70,7 @@ app.use('/api/', apiLimiter);
 app.use('/api/', speedLimiter);
 
 // 9. Request logging (add if you have morgan)
-if (process.env.NODE_ENV === 'development') {
-  const morgan = require('morgan');
-  app.use(morgan('dev'));
-}
+// Replaced by Winston + Morgan logging in tracking
 
 // ═══════════════════════════════════════════════════════════
 // ROUTES
@@ -67,13 +80,15 @@ if (process.env.NODE_ENV === 'development') {
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
-const cartRoutes = require('./routes/cartRoutes');
+// const cartRoutes = require('./routes/cartRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Mount routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api/cart', cartRoutes);
+// app.use('/api/cart', cartRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check endpoint
 app.get('/', (req, res) => {
@@ -107,8 +122,16 @@ app.use((req, res) => {
 });
 
 // Global error handler
+const { logError } = require('./middleware/logging');
+
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
+  // Log error
+  logError(err, req, {
+    statusCode: err.statusCode || 500,
+    url: req.url,
+    method: req.method,
+    body: req.body,
+  });
 
   // Don't leak error details in production
   const message = process.env.NODE_ENV === 'production' 
@@ -118,7 +141,11 @@ app.use((err, req, res, next) => {
   res.status(err.statusCode || 500).json({
     success: false,
     message,
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    requestId: req.id,
+    ...(process.env.NODE_ENV === 'development' && { 
+      stack: err.stack,
+      error: err,
+    }),
   });
 });
 
@@ -129,6 +156,19 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, '0.0.0.0', () => {
+  // Log server startup
+  logger.info('Server starting...', {
+    environment: process.env.NODE_ENV,
+    port: PORT,
+    nodeVersion: process.version,
+    platform: process.platform,
+  });
+
+  logger.info(`Server running on port ${PORT}`, {
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString(),
+  });
+
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
@@ -143,13 +183,34 @@ const server = app.listen(PORT, '0.0.0.0', () => {
 });
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-  console.error(`Unhandled Rejection: ${err.message}`);
+process.on('unhandledRejection', (error) => {
+  logger.error('Unhandled Rejection:', {
+    error: error.message,
+    stack: error.stack,
+  });
   server.close(() => process.exit(1));
 });
 
 // Handle uncaught exceptions
-process.on('uncaughtException', (err) => {
-  console.error(`Uncaught Exception: ${err.message}`);
+process.on('uncaughtException', (error) => {
+  logger.error('Uncaught Exception:', {
+    error: error.message,
+    stack: error.stack,
+  });
   process.exit(1);
+});
+
+// Log shutdown
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM signal received: closing HTTP server');
+  server.close(() => {
+    logger.info('HTTP server closed');
+  });
+});
+
+process.on('SIGINT', () => {
+  logger.info('SIGINT signal received: closing HTTP server');
+  server.close(() => {
+    logger.info('HTTP server closed');
+  });
 });

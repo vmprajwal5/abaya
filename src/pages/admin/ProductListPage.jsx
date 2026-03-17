@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { Search, Plus, Filter, Edit, Trash2, Loader2 } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
-import { productsAPI, createProduct, deleteProduct } from "../../services/api"
+import { productAPI } from "../../services/api"
 import { toast } from "react-hot-toast"
 
 export function ProductListPage() {
@@ -20,7 +20,7 @@ export function ProductListPage() {
     const fetchProducts = async () => {
         setIsLoading(true)
         try {
-            const data = await productsAPI.getAll()
+            const data = await productAPI.getAll()
             setProducts(data || [])
         } catch (error) {
             console.error("Failed to load products", error)
@@ -38,7 +38,7 @@ export function ProductListPage() {
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this product?")) {
             try {
-                await deleteProduct(id)
+                await productAPI.delete(id)
                 setProducts(products.filter(p => p._id !== id))
                 toast.success("Product deleted")
             } catch (error) {

@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const { validatePassword } = require('../utils/passwordValidator');
+const { logAuth, logSecurity, logSuspicious } = require('../middleware/logging');
 const { 
   trackFailedAttempt, 
   resetAttempts, 
@@ -42,6 +43,15 @@ exports.register = async (req, res) => {
 
     // Generate token
     const token = user.getSignedJwtToken();
+
+    // After successful registration:
+    logAuth('REGISTER_SUCCESS', {
+      userId: user._id,
+      email: user.email,
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+      requestId: req.id,
+    });
 
     // Set cookie options
     const cookieOptions = {
@@ -127,8 +137,25 @@ exports.login = async (req, res) => {
     if (!isMatch) {
       // Track failed attempt
       const attemptResult = trackFailedAttempt(email);
+
+      // Log failed attempt
+      logAuth('LOGIN_FAILED', {
+        email,
+        ip: req.ip,
+        userAgent: req.get('user-agent'),
+        reason: 'Invalid password',
+        attemptNumber: attemptResult.attempts,
+        requestId: req.id,
+      });
       
       if (attemptResult.locked) {
+        logSuspicious('BRUTE_FORCE_ATTEMPT', {
+          email,
+          ip: req.ip,
+          attempts: attemptResult.attempts,
+          lockedUntil: attemptResult.lockUntil,
+        });
+
         return res.status(423).json({
           success: false,
           message: 'Account locked due to too many failed login attempts. Please try again after 15 minutes.',
@@ -145,6 +172,16 @@ exports.login = async (req, res) => {
 
     // Successful login - reset attempts
     resetAttempts(email);
+
+    // Log successful login
+    logAuth('LOGIN_SUCCESS', {
+      userId: user._id,
+      email: user.email,
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+      role: user.role,
+      requestId: req.id,
+    });
 
     // Update last login
     user.lastLogin = new Date();
@@ -192,6 +229,14 @@ exports.logout = async (req, res) => {
     httpOnly: true,
   });
 
+  // In logout:
+  logAuth('LOGOUT', {
+    userId: req.user._id,
+    email: req.user.email,
+    ip: req.ip,
+    requestId: req.id,
+  });
+
   res.status(200).json({
     success: true,
     message: 'Logged out successfully',
@@ -231,6 +276,15 @@ exports.changePassword = async (req, res) => {
     const isMatch = await user.matchPassword(currentPassword);
 
     if (!isMatch) {
+      // After failed password change (wrong current password):
+      logSecurity('PASSWORD_CHANGE_FAILED', 'MEDIUM', {
+        userId: req.user._id,
+        email: req.user.email,
+        ip: req.ip,
+        reason: 'Current password incorrect',
+        requestId: req.id,
+      });
+
       return res.status(401).json({
         success: false,
         message: 'Current password is incorrect',
@@ -259,6 +313,14 @@ exports.changePassword = async (req, res) => {
     // Update password
     user.password = newPassword;
     await user.save();
+
+    // After successful password change:
+    logSecurity('PASSWORD_CHANGED', 'MEDIUM', {
+      userId: req.user._id,
+      email: req.user.email,
+      ip: req.ip,
+      requestId: req.id,
+    });
 
     // Generate new token
     const token = user.getSignedJwtToken();

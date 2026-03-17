@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { getOrders, deliverOrder } from "../../services/api"
+import { adminAPI } from "../../services/api"
 import { Loader2, Search, CheckCircle } from "lucide-react"
 
 export function AdminOrdersPage() {
@@ -14,9 +14,9 @@ export function AdminOrdersPage() {
     const fetchOrders = async () => {
         setIsLoading(true)
         try {
-            const { data } = await getOrders()
-            // Sort by date desc
-            const sorted = (data || []).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            const data = await adminAPI.getAllOrders();
+            const orderList = Array.isArray(data) ? data : (data?.orders || []);
+            const sorted = orderList.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
             setOrders(sorted)
         } catch (error) {
             console.error("Failed to load orders", error)
@@ -27,7 +27,7 @@ export function AdminOrdersPage() {
 
     const handleDeliver = async (id) => {
         try {
-            await deliverOrder(id)
+            await adminAPI.updateOrderStatus(id, 'Delivered')
             setOrders(orders.map(o => o._id === id ? { ...o, isDelivered: true, deliveredAt: new Date().toISOString() } : o))
         } catch (error) {
             alert("Failed to mark as delivered: " + error.message)

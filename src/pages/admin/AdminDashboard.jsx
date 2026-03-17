@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { getOrderStats } from "../../services/api"
+import { adminAPI } from "../../services/api"
 import {
     ShoppingBag,
     DollarSign,
@@ -31,7 +31,7 @@ export function AdminDashboard() {
         const fetchStats = async () => {
             try {
                 // Determine if we are in dev or prod, or just handle potential errors gracefully
-                const { data } = await getOrderStats()
+                const data = await adminAPI.getDashboardStats()
                 setStats(data || {
                     totalOrders: 0,
                     totalSales: 0,

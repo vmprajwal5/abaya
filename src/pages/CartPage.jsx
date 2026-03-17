@@ -3,13 +3,67 @@ import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useNavigate } from 'react-router-dom';
+import { cartAPI } from '../services/api';
+import toast from 'react-hot-toast';
 
 const CartPage = () => {
-    const { cart, removeFromCart, updateQuantity, getCartTotals, clearCart } = useCart();
+    const { cart, removeFromCart: contextRemove, updateQuantity: contextUpdate, getCartTotals, clearCart } = useCart();
     const { currentUser } = useAuth();
     const { formatPrice, convertPrice } = useCurrency();
     const navigate = useNavigate();
     const totals = getCartTotals();
+
+    // Update quantity
+    const updateQuantity = async (itemId, newQuantity) => {
+        if (newQuantity < 1) {
+            toast.error('Quantity must be at least 1');
+            return;
+        }
+        try {
+            const response = await cartAPI.updateItem(itemId, { quantity: newQuantity });
+            if (response && (response.success || response.cart)) {
+                contextUpdate(itemId, newQuantity);
+                toast.success('Cart updated');
+            }
+        } catch (error) {
+            console.error('Update cart error:', error);
+            toast.error(error.response?.data?.message || 'Failed to update cart');
+            if (error.response?.status === 404) contextUpdate(itemId, newQuantity);
+        }
+    };
+
+    // Remove item
+    const removeFromCart = async (itemId) => {
+        try {
+            const response = await cartAPI.removeItem(itemId);
+            if (response && (response.success || response.cart)) {
+                contextRemove(itemId);
+                toast.success('Item removed from cart');
+            }
+        } catch (error) {
+            console.error('Remove item error:', error);
+            toast.error(error.response?.data?.message || 'Failed to remove item');
+            if (error.response?.status === 404) contextRemove(itemId);
+        }
+    };
+
+    // Apply coupon
+    const applyCoupon = async (code) => {
+        if (!code || code.trim() === '') {
+            toast.error('Please enter a coupon code');
+            return;
+        }
+        try {
+            const response = await cartAPI.applyCoupon(code.trim());
+            if (response && response.success) {
+                toast.success(`Coupon applied! You saved MVR ${response.data.discount}`);
+            }
+        } catch (error) {
+            console.error('Apply coupon error:', error);
+            const errorMsg = error.response?.data?.message || 'Invalid or expired coupon';
+            toast.error(errorMsg);
+        }
+    };
 
     // Convert totals from MVR to current currency
     const convertedTotals = {

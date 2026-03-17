@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { getOrderStats, getOrders, productsAPI } from "../../services/api"
+import { adminAPI, productAPI } from "../../services/api"
 import {
     ShoppingBag,
     DollarSign,
@@ -31,9 +31,9 @@ export function DashboardHome() {
         const fetchData = async () => {
             try {
                 const [statsRes, ordersRes, productsRes] = await Promise.all([
-                    getOrderStats(),
-                    getOrders(),
-                    productsAPI.getAll()
+                    adminAPI.getDashboardStats(),
+                    adminAPI.getOrders(),
+                    productAPI.getAll()
                 ])
 
                 setStats(statsRes.data || {

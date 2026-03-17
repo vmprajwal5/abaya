@@ -1,4 +1,5 @@
 const Order = require('../models/Order');
+const { logOrder, logDataAccess } = require('../middleware/logging');
 
 const addOrderItems = async (req, res) => {
     try {
@@ -43,6 +44,14 @@ const addOrderItems = async (req, res) => {
             });
 
             const createdOrder = await order.save();
+
+            // After order creation:
+            logOrder('CREATED', order, req.user, {
+              ip: req.ip,
+              paymentMethod: order.paymentMethod,
+              itemCount: order.items.length,
+              requestId: req.id,
+            });
 
             res.status(201).json(createdOrder);
         }
@@ -129,6 +138,14 @@ const getOrderById = async (req, res) => {
         if (order) {
             // Ensure the user is an admin or the owner of the order
             if (req.user && (req.user.isAdmin || req.user._id.toString() === order.user._id.toString())) {
+                // Log data access for compliance
+                logDataAccess(
+                  'ORDER_DETAILS',
+                  req.user,
+                  { type: 'Order', id: order._id },
+                  'User viewing own order'
+                );
+
                 res.json(order);
             } else {
                 res.status(401).json({ message: 'Not authorized to view this order' });

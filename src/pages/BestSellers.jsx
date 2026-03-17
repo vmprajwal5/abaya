@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { productsAPI } from '../services/api';
+import { productAPI } from '../services/api';
 
 export default function BestSellers() {
     const [products, setProducts] = useState([]);
@@ -12,7 +12,7 @@ export default function BestSellers() {
 
     const fetchBestSellers = async () => {
         try {
-            const data = await productsAPI.getAll();
+            const data = await productAPI.getAll();
             // Sort by rating descending (best sellers = highest rated)
             const sorted = [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0));
             setProducts(sorted);

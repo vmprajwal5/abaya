@@ -7,8 +7,9 @@ import { useCurrency } from "../contexts/CurrencyContext"
 import { cn } from "../lib/utils"
 import { openWhatsApp } from "../lib/whatsapp"
 import * as Accordion from "@radix-ui/react-accordion"
-import { productsAPI } from "../services/api"
+import { productAPI, cartAPI } from "../services/api"
 import { PageLoader } from "../components/ui/LoadingSpinner"
+import toast from 'react-hot-toast';
 
 const DesktopTabs = ({ activeTab, setActiveTab, product }) => (
     <div className="mt-12 border-t border-gray-100 pt-8 hidden lg:block">
@@ -87,12 +88,13 @@ export function ProductDetails() {
     const [selectedColor, setSelectedColor] = useState(null)
     const [quantity, setQuantity] = useState(1)
     const [activeTab, setActiveTab] = useState("description")
+    const [addingToCart, setAddingToCart] = useState(false)
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 setLoading(true)
-                const data = await productsAPI.getById(id)
+                const data = await productAPI.getOne(id)
                 setProduct(data)
                 // Set defaults
                 if (data.colors && data.colors.length > 0) setSelectedColor(data.colors[0])
@@ -111,16 +113,81 @@ export function ProductDetails() {
     if (loading) return <PageLoader />
     if (error || !product) return <div className="min-h-screen pt-32 text-center text-red-500">{error || "Product not found"}</div>
 
-    const handleAddToCart = () => {
-        addToCart({
-            _id: product._id,
-            title: product.name,
-            priceMVR: product.price,
-            image: product.images?.[0],
-            color: selectedColor?.name,
-            size: selectedSize,
-        }, quantity)
-    }
+    const handleAddToCart = async () => {
+        // Validation
+        if (!selectedSize) {
+            toast.error('Please select a size');
+            return;
+        }
+
+        if (!selectedColor) {
+            toast.error('Please select a color');
+            return;
+        }
+
+        if (quantity < 1) {
+            toast.error('Please select quantity');
+            return;
+        }
+
+        try {
+            setAddingToCart(true);
+
+            // Add local context fallback just in case backend fails, for smooth demo
+            addToCart({
+                _id: product._id,
+                title: product.name,
+                priceMVR: product.price,
+                image: product.images?.[0],
+                color: selectedColor?.name,
+                size: selectedSize,
+            }, quantity)
+
+            const cartData = {
+                product: product._id,
+                quantity,
+                size: selectedSize,
+                color: selectedColor.name,
+                price: product.price,
+            };
+
+            const response = await cartAPI.addItem(cartData);
+
+            if (response && response.success) {
+                toast.success('Added to cart! 🛒');
+            }
+
+        } catch (error) {
+            console.error('Add to cart error:', error);
+            
+            let errorMsg = 'Failed to add to cart on server';
+            
+            if (error.response) {
+                const { status, data } = error.response;
+                
+                if (status === 401) {
+                    errorMsg = 'Please login to add items to cart';
+                    toast.error(errorMsg);
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                    return;
+                } else if (status === 400) {
+                    errorMsg = data.message || 'Invalid product selection';
+                } else if (status === 404) {
+                    errorMsg = 'Product not available';
+                } else if (status === 409) {
+                    errorMsg = 'Item already in cart';
+                } else {
+                    errorMsg = data.message || errorMsg;
+                }
+            }
+            // We already did local addToCart, so we just log or show a warning
+            toast.error(errorMsg);
+        } finally {
+            setAddingToCart(false);
+        }
+    };
 
     // Determine price to show (using MVR as base from DB)
     const finalPrice = convertPrice(product.price, 'MVR');

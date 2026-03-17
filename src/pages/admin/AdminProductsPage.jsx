@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Search, Plus, Filter, Edit, Trash2, X, Loader2 } from "lucide-react"
-import { productsAPI, uploadAPI, createProduct, deleteProduct, updateProduct } from "../../services/api"
+import { productAPI, uploadAPI } from "../../services/api"
 
 export function AdminProductsPage() {
     const [products, setProducts] = useState([])
@@ -36,7 +36,7 @@ export function AdminProductsPage() {
     const fetchProducts = async () => {
         setIsLoading(true)
         try {
-            const data = await productsAPI.getAll()
+            const data = await productAPI.getAll()
             setProducts(data || [])
         } catch (error) {
             console.error("Failed to load products", error)
@@ -54,7 +54,7 @@ export function AdminProductsPage() {
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this product?")) {
             try {
-                await deleteProduct(id)
+                await productAPI.delete(id)
                 setProducts(products.filter(p => p._id !== id))
             } catch (error) {
                 alert("Failed to delete product: " + error.message)
@@ -111,9 +111,9 @@ export function AdminProductsPage() {
             }
 
             if (newProduct._id) { // If editing
-                await updateProduct({ ...payload, _id: newProduct._id })
+                await productAPI.update(newProduct._id, payload)
             } else {
-                await createProduct(payload)
+                await productAPI.create(payload)
             }
 
             setIsModalOpen(false)

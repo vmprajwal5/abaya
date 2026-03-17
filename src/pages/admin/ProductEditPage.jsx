@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Loader2, Upload, X } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { productsAPI, updateProduct, uploadAPI } from "../../services/api";
+import { productAPI, uploadAPI } from "../../services/api";
 import { Button } from "../../components/ui/button";
 
 export function ProductEditPage() {
@@ -28,7 +28,7 @@ export function ProductEditPage() {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const data = await productsAPI.getById(id);
+                const data = await productAPI.getOne(id);
                 const product = data;
 
                 setName(product.name);
@@ -60,7 +60,7 @@ export function ProductEditPage() {
 
         setIsUploading(true);
         try {
-            const data = await uploadAPI.upload(file); // Services/api uses different signature? Let's check.
+            const data = await uploadAPI.uploadImage(formData);
             // In ProductListPage it was `uploadAPI.uploadImage`. Let's assume standard `uploadAPI.upload` is compatible or use provided logic in prev file.
             // Wait, previous file had `uploadAPI.uploadImage`. But my service file shows `uploadAPI.upload`.
             // Let's rely on `uploadAPI.upload` (it takes a file directly and does FormData internaly) based on `src/services/api.js` view.
@@ -84,8 +84,7 @@ export function ProductEditPage() {
         e.preventDefault();
         setIsSaving(true);
         try {
-            await updateProduct({
-                _id: id,
+            await productAPI.update(id, {
                 name,
                 price,
                 image,

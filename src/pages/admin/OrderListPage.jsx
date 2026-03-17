@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { getOrders } from "../../services/api"
+import { adminAPI } from "../../services/api"
 import { Loader2, Search, CheckCircle, Eye } from "lucide-react"
 
 export function OrderListPage() {
@@ -14,9 +14,9 @@ export function OrderListPage() {
     const fetchOrders = async () => {
         setIsLoading(true)
         try {
-            const { data } = await getOrders()
-            // Sort by date desc
-            const sorted = (data || []).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            const data = await adminAPI.getAllOrders();
+            const orderList = Array.isArray(data) ? data : (data?.orders || []);
+            const sorted = orderList.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
             setOrders(sorted)
         } catch (error) {
             console.error("Failed to load orders", error)

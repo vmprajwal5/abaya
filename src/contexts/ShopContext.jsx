@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { productsAPI } from '../services/api';
+import { productAPI } from '../services/api';
 
 const ShopContext = createContext(null);
 
@@ -167,7 +167,7 @@ export const ShopProvider = ({ children }) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const data = await productsAPI.getAll();
+                const data = await productAPI.getAll();
 
 
                 // If API returns products, use them

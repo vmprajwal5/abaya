@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { productsAPI } from '../services/api';
+import { productAPI } from '../services/api';
 
 export function DebugPage() {
     const [status, setStatus] = useState('Checking...');
@@ -15,7 +15,7 @@ export function DebugPage() {
                 setStatus(`Backend Connected: ${health.message}`);
 
                 // 2. Fetch Products via Service
-                const items = await productsAPI.getAll();
+                const items = await productAPI.getAll();
                 setProducts(items);
             } catch (err) {
                 console.error(err);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { productsAPI } from "../../services/api"
+import { productAPI } from "../../services/api"
 import { Tag, Loader2, Plus, Search } from "lucide-react"
 
 export function CategoryListPage() {
@@ -12,7 +12,7 @@ export function CategoryListPage() {
             setIsLoading(true)
             try {
                 // Since we don't have a categories endpoint, we derive unique categories from products
-                const data = await productsAPI.getAll()
+                const data = await productAPI.getAll()
                 if (data) {
                     const uniqueCategories = [...new Set(data.map(product => product.category))].filter(Boolean)
                     setCategories(uniqueCategories)

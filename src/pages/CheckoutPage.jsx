@@ -13,7 +13,8 @@ import { useAuth } from "../contexts/AuthContext"
 import { Button } from "../components/ui/button"
 import { cn } from "../lib/utils"
 import { openWhatsApp } from "../lib/whatsapp"
-import { ordersAPI } from "../services/api"
+import { orderAPI } from "../services/api"
+import toast from 'react-hot-toast'
 import { validateCardNumber, validateCardExpiry, validateCVC, validateMaldivesPhone, validateName, formatCardNumber, formatExpiry } from "../lib/validation"
 
 // --- Validation Schema ---
@@ -231,6 +232,14 @@ export function CheckoutPage() {
     }, [cart, navigate, isProcessing, location]);
 
     const onSubmit = async (data) => {
+        // Validate required fields first
+        if (!data.firstName || !data.phone || !data.address) {
+            const errorMsg = 'Please fill in all required shipping address fields';
+            toast.error(errorMsg);
+            return;
+        }
+
+        const loadingToast = toast.loading('Processing your order...');
         setIsProcessing(true)
         setError('') // Clear any previous errors
         try {
@@ -272,30 +281,52 @@ export function CheckoutPage() {
                 notes: data.instructions || '',
             }
 
-            const createdOrder = await ordersAPI.create(orderData);
+            const createdOrder = await orderAPI.create(orderData);
 
-            if (data.saveInfo) {
-                // Future: Save profile info
+            toast.dismiss(loadingToast);
+
+            if (createdOrder) {
+                toast.success('Order placed successfully! 🎉');
+                if (data.saveInfo) {
+                    // Future: Save profile info
+                }
+
+                localStorage.removeItem("checkout_draft")
+                clearCart(); // Clear cart using CartContext
+
+                navigate(`/order-success?orderId=${createdOrder._id}`)
             }
 
-            localStorage.removeItem("checkout_draft")
-            clearCart(); // Clear cart using CartContext
-
-
-            navigate(`/order-success?orderId=${createdOrder._id}`)
         } catch (error) {
+            toast.dismiss(loadingToast);
             console.error('Checkout error:', error);
 
-            // Better error handling
-            if (error.message === 'Network Error') {
-                setError('Cannot connect to server. Please check your internet connection.');
-            } else if (error.response?.status === 404) {
-                setError('Order endpoint not found. Please contact support.');
-            } else if (error.response?.data?.message) {
-                setError(error.response.data.message);
-            } else {
-                setError('Failed to process order. Please try again.');
+            let errorMsg = 'Failed to process order. Please try again.';
+
+            if (error.response) {
+                const { status, data } = error.response;
+                if (status === 401) {
+                    errorMsg = 'Please login to place an order';
+                    toast.error(errorMsg);
+                    setTimeout(() => {
+                        navigate('/login');
+                    }, 2000);
+                    return;
+                } else if (status === 400) {
+                    errorMsg = data.message || 'Invalid order data. Please check your information.';
+                } else if (status === 404) {
+                    errorMsg = 'Order endpoint not found. Please contact support.';
+                } else if (status === 500) {
+                    errorMsg = 'Server error. Please try again later.';
+                } else {
+                    errorMsg = data.message || errorMsg;
+                }
+            } else if (error.message === 'Network Error' || error.isNetworkError) {
+                errorMsg = error.message || 'Cannot connect to server. Please check your internet connection.';
             }
+
+            setError(errorMsg);
+            toast.error(errorMsg, { duration: 6000 });
         } finally {
             setIsProcessing(false)
         }
