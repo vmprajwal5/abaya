@@ -171,6 +171,12 @@ app.use((err, req, res, next) => {
 // START SERVER
 // ═══════════════════════════════════════════════════════════
 
+// Keep backend awake (prevent Render free tier sleep)
+if (process.env.NODE_ENV === 'production') {
+  const keepAlive = require('./utils/keepAlive');
+  keepAlive();
+}
+
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, '0.0.0.0', () => {
