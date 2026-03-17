@@ -13,6 +13,7 @@ import { useAuth } from "../contexts/AuthContext"
 import { Button } from "../components/ui/button"
 import { cn } from "../lib/utils"
 import { openWhatsApp } from "../lib/whatsapp"
+import LoadingSpinner from "../components/LoadingSpinner"
 import { orderAPI } from "../services/api"
 import toast from 'react-hot-toast'
 import { validateCardNumber, validateCardExpiry, validateCVC, validateMaldivesPhone, validateName, formatCardNumber, formatExpiry } from "../lib/validation"
@@ -281,11 +282,12 @@ export function CheckoutPage() {
                 notes: data.instructions || '',
             }
 
-            const createdOrder = await orderAPI.create(orderData);
-
+            const response = await orderAPI.create(orderData);
+            
             toast.dismiss(loadingToast);
 
-            if (createdOrder) {
+            if (response?.success || response?._id) {
+                const newOrder = response.order || response;
                 toast.success('Order placed successfully! 🎉');
                 if (data.saveInfo) {
                     // Future: Save profile info
@@ -294,7 +296,7 @@ export function CheckoutPage() {
                 localStorage.removeItem("checkout_draft")
                 clearCart(); // Clear cart using CartContext
 
-                navigate(`/order-success?orderId=${createdOrder._id}`)
+                navigate(`/order-success?orderId=${newOrder._id}`)
             }
 
         } catch (error) {
@@ -337,7 +339,7 @@ export function CheckoutPage() {
     }
 
     if (loading) {
-        return null; // Wait for auth to resolve
+        return <LoadingSpinner message="Loading checkout securely..." />; // Wait for auth to resolve
     }
 
     if (!currentUser) {
@@ -382,7 +384,7 @@ export function CheckoutPage() {
                                                     <div className="absolute -top-2 -right-2 bg-gray-500 text-white w-5 h-5 rounded-full text-[10px] flex items-center justify-center z-10 font-medium">
                                                         {item.quantity}
                                                     </div>
-                                                    <img src={item.image} className="w-full h-full object-cover" alt={item.title} />
+                                                    <img src={item.image} className="w-full h-full object-cover" alt={item.title}  loading="lazy" />
                                                 </div>
                                                 <div className="flex-1">
                                                     <p className="text-sm font-medium text-gray-900">{item.title}</p>
@@ -759,7 +761,7 @@ export function CheckoutPage() {
                                         {cart.map((item, idx) => (
                                             <div key={`${item.id}-${idx}`} className="flex gap-4 items-center border-b border-gray-100 pb-3">
                                                 <div className="w-12 h-16 bg-gray-100 rounded overflow-hidden flex-shrink-0">
-                                                    <img src={item.image} className="w-full h-full object-cover" alt={item.title} />
+                                                    <img src={item.image} className="w-full h-full object-cover" alt={item.title}  loading="lazy" />
                                                 </div>
                                                 <div className="flex-1">
                                                     <p className="text-sm font-medium line-clamp-1">{item.title}</p>

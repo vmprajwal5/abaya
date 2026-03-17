@@ -13,6 +13,25 @@ const api = axios.create({
   timeout: 30000, // 30 second timeout
 });
 
+// Simple cache
+const cache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Cached GET request
+const cachedGet = async (url, config) => {
+  const cacheKey = url + JSON.stringify(config?.params || {});
+  const cached = cache.get(cacheKey);
+  
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    console.log('📦 Using cached data for:', url);
+    return cached.data;
+  }
+  
+  const response = await api.get(url, config);
+  cache.set(cacheKey, { data: response, timestamp: Date.now() });
+  return response;
+};
+
 // Request interceptor - Add logging
 api.interceptors.request.use(
   (config) => {
@@ -131,13 +150,13 @@ export const authAPI = {
 // ═══════════════════════════════════════════════════════════
 
 export const productAPI = {
-  getAll: (params) => api.get('/products', { params }),
-  getOne: (id) => api.get(`/products/${id}`),
-  getFeatured: () => api.get('/products/featured'),
-  getNewArrivals: () => api.get('/products/new-arrivals'),
-  getBestSellers: () => api.get('/products/best-sellers'),
-  getRelated: (id) => api.get(`/products/${id}/related`),
-  getFilters: () => api.get('/products/filters/options'),
+  getAll: (params) => cachedGet('/products', { params }),
+  getOne: (id) => cachedGet(`/products/${id}`),
+  getFeatured: () => cachedGet('/products/featured'),
+  getNewArrivals: () => cachedGet('/products/new-arrivals'),
+  getBestSellers: () => cachedGet('/products/best-sellers'),
+  getRelated: (id) => cachedGet(`/products/${id}/related`),
+  getFilters: () => cachedGet('/products/filters/options'),
   addReview: (id, data) => api.post(`/products/${id}/reviews`, data),
   updateReview: (productId, reviewId, data) => 
     api.put(`/products/${productId}/reviews/${reviewId}`, data),

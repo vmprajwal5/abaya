@@ -84,7 +84,7 @@ export function SearchOverlay({ isOpen, onClose }) {
                                             className="flex items-center gap-6 p-4 hover:bg-gray-50 group transition-colors border-b border-gray-50 last:border-0"
                                         >
                                             <div className="w-16 h-20 bg-gray-100 overflow-hidden">
-                                                <img src={product.image} alt={product.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
+                                                <img src={product.image} alt={product.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all"  loading="lazy" />
                                             </div>
                                             <div className="flex-1">
                                                 <h4 className="font-medium text-black uppercase tracking-wide text-sm group-hover:text-black/70 transition-colors">{product.title}</h4>

@@ -89,6 +89,8 @@ function App() {
                                                     <Route path="/cart" element={<CartPage />} />
                                                     <Route path="/shop" element={<CategoryPage />} />
                                                     <Route path="/shop/:slug" element={<CategoryPage />} />
+                                                    <Route path="/products" element={<CategoryPage />} />
+                                                    <Route path="/products/:slug" element={<CategoryPage />} />
                                                     <Route path="/product/:id" element={<ProductDetails />} />
                                                     <Route path="/about" element={<AboutPage />} />
                                                     <Route path="/best-sellers" element={<BestSellers />} />
@@ -115,6 +117,14 @@ function App() {
                                                     <Route path="/forgot-password" element={<ForgotPassword />} />
                                                     <Route
                                                         path="/profile"
+                                                        element={
+                                                            <ProtectedRoute>
+                                                                <Profile />
+                                                            </ProtectedRoute>
+                                                        }
+                                                    />
+                                                    <Route
+                                                        path="/my-orders"
                                                         element={
                                                             <ProtectedRoute>
                                                                 <Profile />

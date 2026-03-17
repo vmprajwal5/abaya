@@ -126,7 +126,7 @@ export function ProductEditPage() {
                         <div className="flex items-start gap-6">
                             <div className="w-40 h-52 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 flex-shrink-0 relative group">
                                 {image ? (
-                                    <img src={image} alt="Preview" className="w-full h-full object-cover" />
+                                    <img src={image} alt="Preview" className="w-full h-full object-cover"  loading="lazy" />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
                                 )}

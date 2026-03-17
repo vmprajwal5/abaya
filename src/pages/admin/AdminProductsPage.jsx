@@ -252,7 +252,7 @@ export function AdminProductsPage() {
                                     </td>
                                     <td className="px-6 py-4 font-medium text-gray-900 flex items-center gap-3">
                                         <div className="w-10 h-10 bg-gray-100 rounded-md overflow-hidden">
-                                            {product.images?.[0] && <img src={product.images[0]} className="w-full h-full object-cover" />}
+                                            {product.images?.[0] && <img src={product.images[0]} className="w-full h-full object-cover"  loading="lazy" />}
                                         </div>
                                         {product.name}
                                     </td>

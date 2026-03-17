@@ -8,9 +8,10 @@ import { authAPI } from "../services/api";
 import { profileSchema } from "../utils/validation";
 import { Button } from "../components/ui/button";
 import { cn } from "../lib/utils";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function Profile() {
-    const { currentUser, logout } = useAuth();
+    const { currentUser, logout, loading } = useAuth();
     const navigate = useNavigate();
     const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +52,7 @@ export default function Profile() {
         navigate("/");
     };
 
+    if (loading) return <LoadingSpinner message="Loading profile..." />;
     if (!currentUser) return null;
 
     return (

@@ -5,10 +5,11 @@ import { useCurrency } from '../contexts/CurrencyContext';
 import { useNavigate } from 'react-router-dom';
 import { cartAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const CartPage = () => {
     const { cart, removeFromCart: contextRemove, updateQuantity: contextUpdate, getCartTotals, clearCart } = useCart();
-    const { currentUser } = useAuth();
+    const { currentUser, loading } = useAuth();
     const { formatPrice, convertPrice } = useCurrency();
     const navigate = useNavigate();
     const totals = getCartTotals();
@@ -21,7 +22,7 @@ const CartPage = () => {
         }
         try {
             const response = await cartAPI.updateItem(itemId, { quantity: newQuantity });
-            if (response && (response.success || response.cart)) {
+            if (response?.success || response?.cart) {
                 contextUpdate(itemId, newQuantity);
                 toast.success('Cart updated');
             }
@@ -36,7 +37,7 @@ const CartPage = () => {
     const removeFromCart = async (itemId) => {
         try {
             const response = await cartAPI.removeItem(itemId);
-            if (response && (response.success || response.cart)) {
+            if (response?.success || response?.cart) {
                 contextRemove(itemId);
                 toast.success('Item removed from cart');
             }
@@ -55,7 +56,7 @@ const CartPage = () => {
         }
         try {
             const response = await cartAPI.applyCoupon(code.trim());
-            if (response && response.success) {
+            if (response?.success) {
                 toast.success(`Coupon applied! You saved MVR ${response.data.discount}`);
             }
         } catch (error) {
@@ -72,6 +73,8 @@ const CartPage = () => {
         tax: convertPrice(totals.tax, 'MVR'),
         total: convertPrice(totals.total, 'MVR')
     };
+
+    if (loading) return <LoadingSpinner message="Loading cart..." />;
 
     if (cart.length === 0) {
         return (

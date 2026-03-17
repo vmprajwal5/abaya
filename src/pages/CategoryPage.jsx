@@ -9,6 +9,7 @@ import { Button } from "../components/ui/button"
 import * as Slider from "@radix-ui/react-slider"
 import * as Accordion from "@radix-ui/react-accordion"
 import { Loader2 } from "lucide-react"
+import LoadingSpinner from "../components/LoadingSpinner"
 
 const ITEMS_PER_PAGE = 9
 
@@ -117,11 +118,7 @@ export function CategoryPage() {
 
     // Handle loading state AFTER all hooks are declared
     if (loading) {
-        return (
-            <div className="min-h-screen pt-32 flex items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-secondary" />
-            </div>
-        )
+        return <LoadingSpinner message="Loading products..." />;
     }
 
     // Handlers

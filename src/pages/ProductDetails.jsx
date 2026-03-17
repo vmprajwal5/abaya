@@ -8,7 +8,7 @@ import { cn } from "../lib/utils"
 import { openWhatsApp } from "../lib/whatsapp"
 import * as Accordion from "@radix-ui/react-accordion"
 import { productAPI, cartAPI } from "../services/api"
-import { PageLoader } from "../components/ui/LoadingSpinner"
+import LoadingSpinner from "../components/LoadingSpinner"
 import toast from 'react-hot-toast';
 
 const DesktopTabs = ({ activeTab, setActiveTab, product }) => (
@@ -97,8 +97,8 @@ export function ProductDetails() {
                 const data = await productAPI.getOne(id)
                 setProduct(data)
                 // Set defaults
-                if (data.colors && data.colors.length > 0) setSelectedColor(data.colors[0])
-                if (data.sizes && data.sizes.length > 0) setSelectedSize(data.sizes[0])
+                if (data?.colors?.length > 0) setSelectedColor(data.colors[0])
+                if (data?.sizes?.length > 0) setSelectedSize(data.sizes[0])
             } catch (err) {
                 console.error(err)
                 setError("Failed to load product details")
@@ -110,7 +110,7 @@ export function ProductDetails() {
         if (id) fetchProduct()
     }, [id])
 
-    if (loading) return <PageLoader />
+    if (loading) return <LoadingSpinner message="Loading product details..." />
     if (error || !product) return <div className="min-h-screen pt-32 text-center text-red-500">{error || "Product not found"}</div>
 
     const handleAddToCart = async () => {
@@ -153,7 +153,7 @@ export function ProductDetails() {
 
             const response = await cartAPI.addItem(cartData);
 
-            if (response && response.success) {
+            if (response?.success) {
                 toast.success('Added to cart! 🛒');
             }
 
@@ -209,10 +209,11 @@ export function ProductDetails() {
                     {/* Desktop Gallery */}
                     <div className="hidden lg:block relative aspect-[3/4] bg-gray-100 overflow-hidden rounded-sm group cursor-zoom-in">
                         <img
-                            src={product.images?.[activeImage] || '/placeholder.jpg'}
-                            alt={product.name}
-                            onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder.jpg'; }}
+                            src={product?.images?.[activeImage] || '/placeholder.jpg'}
+                            alt={product?.name || 'Product'}
+                            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.jpg'; }}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-125 origin-center"
+                            loading="lazy"
                         />
                     </div>
                     <div className="hidden lg:flex gap-4 overflow-x-auto pb-2">
@@ -225,7 +226,7 @@ export function ProductDetails() {
                                     activeImage === idx ? "border-secondary" : "border-transparent hover:border-gray-200"
                                 )}
                             >
-                                <img src={img || '/placeholder.jpg'} onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder.jpg'; }} alt="" className="w-full h-full object-cover" />
+                                <img src={img || '/placeholder.jpg'} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.jpg'; }} alt="" className="w-full h-full object-cover" loading="lazy" />
                             </button>
                         ))}
                     </div>
@@ -234,7 +235,7 @@ export function ProductDetails() {
                     <div className="lg:hidden -mx-4 overflow-x-auto snap-x snap-mandatory flex scrollbar-hide">
                         {product.images?.map((img, idx) => (
                             <div key={idx} className="snap-center flex-shrink-0 w-[85vw] mx-2 first:ml-4 last:mr-4 aspect-[3/4] bg-gray-100 rounded-sm overflow-hidden">
-                                <img src={img || '/placeholder.jpg'} onError={(e) => { e.target.onerror = null; e.target.src = '/placeholder.jpg'; }} alt={product.name} className="w-full h-full object-cover" />
+                                <img src={img || '/placeholder.jpg'} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.jpg'; }} alt={product?.name || 'Product'} className="w-full h-full object-cover" loading="lazy" />
                             </div>
                         ))}
                     </div>

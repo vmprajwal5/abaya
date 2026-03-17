@@ -40,8 +40,8 @@ function ProductCard({ product }) {
             <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 mb-6">
                 {!imageError ? (
                     <img
-                        src={product.image}
-                        alt={product.name}
+                        src={product?.images?.[0] || product?.image || '/placeholder.jpg'}
+                        alt={product?.name || 'Product'}
                         loading="lazy"
                         onError={() => setImageError(true)}
                         className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110"
@@ -66,11 +66,11 @@ function ProductCard({ product }) {
             {/* Product Info - Minimalist, spaced out */}
             <div className="flex flex-col items-start space-y-2 px-1">
                 <h3 className="font-serif text-xl mb-2 text-black group-hover:text-black/80 transition-colors duration-300">
-                    {product.name}
+                    {product?.name || 'Unnamed Product'}
                 </h3>
 
                 <div className="font-sans text-lg font-semibold text-gray-900 mt-2">
-                    {formatPrice(finalPrice)}
+                    {formatPrice(convertPrice(product?.price || product?.priceMVR || 0, 'MVR'))}
                 </div>
             </div>
         </motion.div>
