@@ -19,10 +19,7 @@ export default function Register() {
   const [showErrors, setShowErrors] = useState(false);
 
   const passwordRequirements = [
-    'At least 12 characters long',
-    'Contains uppercase and lowercase letters',
-    'Contains at least one number',
-    'Contains at least one special character (!@#$%^&*)',
+    'At least 6 characters long',
   ];
 
   const handleChange = (e) => {
@@ -48,28 +45,15 @@ export default function Register() {
     // Email validation
     if (!formData.email) {
       newErrors.push('Email is required');
-    } else if (!/\\S+@\\S+\\.\\S+/.test(formData.email)) {
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.email.trim())) {
       newErrors.push('Please enter a valid email address');
     }
 
     // Password validation
     if (!formData.password) {
       newErrors.push('Password is required');
-    } else if (formData.password.length < 12) {
-      newErrors.push('Password must be at least 12 characters long');
-    } else {
-      if (!/[a-z]/.test(formData.password)) {
-        newErrors.push('Password must contain at least one lowercase letter');
-      }
-      if (!/[A-Z]/.test(formData.password)) {
-        newErrors.push('Password must contain at least one uppercase letter');
-      }
-      if (!/\\d/.test(formData.password)) {
-        newErrors.push('Password must contain at least one number');
-      }
-      if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
-        newErrors.push('Password must contain at least one special character');
-      }
+    } else if (formData.password.length < 6) {
+      newErrors.push('Password must be at least 6 characters long');
     }
 
     // Confirm password
