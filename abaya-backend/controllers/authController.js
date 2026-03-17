@@ -1,11 +1,12 @@
 const User = require('../models/User');
-const { validatePassword } = require('../utils/passwordValidator');
-const { logAuth, logSecurity, logSuspicious } = require('../middleware/logging');
-const { 
-  trackFailedAttempt, 
-  resetAttempts, 
-  isLocked 
-} = require('../utils/loginAttemptTracker');
+const jwt = require('jsonwebtoken');
+
+// Generate JWT Token
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE || '30d',
+  });
+};
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -14,71 +15,54 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password, phone } = req.body;
 
-    // Validate password strength
-    const passwordValidation = validatePassword(password);
-    if (!passwordValidation.valid) {
+    if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Password does not meet security requirements',
-        errors: passwordValidation.errors,
+        message: 'Please provide name, email and password',
       });
     }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const userExists = await User.findOne({ email: email.toLowerCase() });
+
+    if (userExists) {
       return res.status(400).json({
         success: false,
         message: 'User already exists with this email',
       });
     }
 
-    // Create user
     const user = await User.create({
       name,
-      email,
+      email: email.toLowerCase(),
       password,
       phone,
     });
 
-    // Generate token
-    const token = user.getSignedJwtToken();
+    const token = generateToken(user._id);
 
-    // After successful registration:
-    logAuth('REGISTER_SUCCESS', {
-      userId: user._id,
-      email: user.email,
-      ip: req.ip,
-      userAgent: req.get('user-agent'),
-      requestId: req.id,
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
-    // Set cookie options
-    const cookieOptions = {
-      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-      httpOnly: true, // Prevent XSS attacks
-      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', // CSRF protection, relaxed for local dev
-    };
-
-    res.status(201)
-      .cookie('token', token, cookieOptions)
-      .json({
-        success: true,
-        token,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        },
-      });
+    res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      token,
+    });
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('Register error:', error);
     res.status(500).json({
       success: false,
-      message: 'Error registering user',
-      error: error.message,
+      message: error.message || 'Error registering user',
     });
   }
 };
@@ -89,9 +73,10 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const ip = req.ip || req.connection.remoteAddress;
 
-    // Validate input
+    console.log('Login attempt for:', email);
+
+    // Simple validation
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -99,123 +84,51 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Check if account is locked
-    const lockStatus = isLocked(email);
-    if (lockStatus.locked) {
-      const minutesRemaining = Math.ceil((lockStatus.lockUntil - Date.now()) / 60000);
-      return res.status(423).json({
-        success: false,
-        message: `Account temporarily locked due to too many failed login attempts. Please try again in ${minutesRemaining} minutes.`,
-        lockUntil: lockStatus.lockUntil,
-      });
-    }
-
-    // Find user with password field
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
 
     if (!user) {
-      // Track failed attempt (even for non-existent users to prevent enumeration)
-      trackFailedAttempt(email);
-      
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: 'Invalid email or password',
       });
     }
 
-    // Check if user is active
-    if (!user.isActive) {
-      return res.status(403).json({
-        success: false,
-        message: 'Account has been deactivated. Please contact support.',
-      });
-    }
+    const isPasswordMatch = await user.comparePassword(password);
 
-    // Verify password
-    const isMatch = await user.matchPassword(password);
-
-    if (!isMatch) {
-      // Track failed attempt
-      const attemptResult = trackFailedAttempt(email);
-
-      // Log failed attempt
-      logAuth('LOGIN_FAILED', {
-        email,
-        ip: req.ip,
-        userAgent: req.get('user-agent'),
-        reason: 'Invalid password',
-        attemptNumber: attemptResult.attempts,
-        requestId: req.id,
-      });
-      
-      if (attemptResult.locked) {
-        logSuspicious('BRUTE_FORCE_ATTEMPT', {
-          email,
-          ip: req.ip,
-          attempts: attemptResult.attempts,
-          lockedUntil: attemptResult.lockUntil,
-        });
-
-        return res.status(423).json({
-          success: false,
-          message: 'Account locked due to too many failed login attempts. Please try again after 15 minutes.',
-          lockUntil: attemptResult.lockUntil,
-        });
-      }
-
+    if (!isPasswordMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
-        remainingAttempts: attemptResult.remainingAttempts,
+        message: 'Invalid email or password',
       });
     }
 
-    // Successful login - reset attempts
-    resetAttempts(email);
+    const token = generateToken(user._id);
 
-    // Log successful login
-    logAuth('LOGIN_SUCCESS', {
-      userId: user._id,
-      email: user.email,
-      ip: req.ip,
-      userAgent: req.get('user-agent'),
-      role: user.role,
-      requestId: req.id,
-    });
-
-    // Update last login
-    user.lastLogin = new Date();
-    await user.save({ validateBeforeSave: false });
-
-    // Generate token
-    const token = user.getSignedJwtToken();
-
-    // Set cookie
-    const cookieOptions = {
-      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
-    };
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
 
-    res.status(200)
-      .cookie('token', token, cookieOptions)
-      .json({
-        success: true,
-        token,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        },
-      });
+    console.log('Login successful for:', user.email);
+
+    res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      token,
+    });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({
       success: false,
-      message: 'Error logging in',
-      error: error.message,
+      message: error.message || 'Error logging in',
     });
   }
 };
@@ -225,34 +138,70 @@ exports.login = async (req, res) => {
 // @access  Private
 exports.logout = async (req, res) => {
   res.cookie('token', 'none', {
-    expires: new Date(Date.now() + 10 * 1000), // 10 seconds
+    expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
   });
 
-  // In logout:
-  logAuth('LOGOUT', {
-    userId: req.user._id,
-    email: req.user.email,
-    ip: req.ip,
-    requestId: req.id,
-  });
-
   res.status(200).json({
     success: true,
-    message: 'Logged out successfully',
+    message: 'User logged out successfully',
   });
 };
 
-// @desc    Get current logged in user
+// @desc    Get current user
 // @route   GET /api/auth/me
 // @access  Private
 exports.getMe = async (req, res) => {
-  const user = await User.findById(req.user.id);
+  try {
+    const user = await User.findById(req.user.id);
 
-  res.status(200).json({
-    success: true,
-    data: user,
-  });
+    res.status(200).json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching user data',
+    });
+  }
+};
+
+// @desc    Update profile
+// @route   PUT /api/auth/profile
+// @access  Private
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error updating profile',
+    });
+  }
 };
 
 // @desc    Change password
@@ -269,83 +218,27 @@ exports.changePassword = async (req, res) => {
       });
     }
 
-    // Get user with password
     const user = await User.findById(req.user.id).select('+password');
-
-    // Verify current password
-    const isMatch = await user.matchPassword(currentPassword);
+    const isMatch = await user.comparePassword(currentPassword);
 
     if (!isMatch) {
-      // After failed password change (wrong current password):
-      logSecurity('PASSWORD_CHANGE_FAILED', 'MEDIUM', {
-        userId: req.user._id,
-        email: req.user.email,
-        ip: req.ip,
-        reason: 'Current password incorrect',
-        requestId: req.id,
-      });
-
       return res.status(401).json({
         success: false,
         message: 'Current password is incorrect',
       });
     }
 
-    // Validate new password
-    const passwordValidation = validatePassword(newPassword);
-    if (!passwordValidation.valid) {
-      return res.status(400).json({
-        success: false,
-        message: 'New password does not meet security requirements',
-        errors: passwordValidation.errors,
-      });
-    }
-
-    // Check if new password is same as current
-    const isSame = await user.matchPassword(newPassword);
-    if (isSame) {
-      return res.status(400).json({
-        success: false,
-        message: 'New password must be different from current password',
-      });
-    }
-
-    // Update password
     user.password = newPassword;
     await user.save();
 
-    // After successful password change:
-    logSecurity('PASSWORD_CHANGED', 'MEDIUM', {
-      userId: req.user._id,
-      email: req.user.email,
-      ip: req.ip,
-      requestId: req.id,
+    res.status(200).json({
+      success: true,
+      message: 'Password changed successfully',
     });
-
-    // Generate new token
-    const token = user.getSignedJwtToken();
-
-    // Set cookie
-    const cookieOptions = {
-      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
-    };
-
-    res.status(200)
-      .cookie('token', token, cookieOptions)
-      .json({
-        success: true,
-        message: 'Password changed successfully',
-        token,
-      });
   } catch (error) {
-    console.error('Password change error:', error);
     res.status(500).json({
       success: false,
       message: 'Error changing password',
-      error: error.message,
     });
   }
 };
