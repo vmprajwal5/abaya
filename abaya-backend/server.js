@@ -42,9 +42,27 @@ app.use(trackPerformance);
 app.use(helmet(securityHeaders));
 
 // 2. Enable CORS with credentials
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://abaya-xnxa.vercel.app',
+  'https://abaya-xnxa-git-main-vmprajwal5s-projects.vercel.app',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  credentials: true, // Allow cookies
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    // Allow any vercel.app subdomain (for preview deployments)
+    if (/\.vercel\.app$/.test(origin)) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
