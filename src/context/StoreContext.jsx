@@ -21,8 +21,7 @@ export const StoreProvider = ({ children }) => {
 
     const fetchSettings = async () => {
         try {
-            const { data } = await API.get('/settings');
-            setSettings(data);
+            // Settings API does not exist yet. Use defaults.
             setLoading(false);
         } catch (error) {
             console.error('Failed to fetch store settings:', error);

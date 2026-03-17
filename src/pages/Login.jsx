@@ -21,8 +21,8 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Simple validation - only check if fields are filled
-    if (!formData.email) {
+    // Simple validation - no external API calls
+    if (!formData.email.trim()) {
       toast.error('Please enter your email');
       return;
     }
@@ -35,7 +35,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      console.log('🔐 Login attempt:', formData.email);
+      console.log('🔐 Attempting login...');
       
       const response = await authAPI.login({
         email: formData.email.trim(),
@@ -58,8 +58,8 @@ export default function Login() {
       
       let errorMessage = 'Login failed. Please try again.';
       
-      if (error.response) {
-        errorMessage = error.response.data?.message || errorMessage;
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
       } else if (error.message) {
         errorMessage = error.message;
       }
