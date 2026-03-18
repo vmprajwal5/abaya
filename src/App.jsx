@@ -54,7 +54,7 @@ const UserListPage = lazy(() => import("./pages/admin/UserListPage").then(module
 const CategoryListPage = lazy(() => import("./pages/admin/CategoryListPage").then(module => ({ default: module.CategoryListPage })))
 const NewsletterPage = lazy(() => import("./pages/admin/NewsletterPage").then(module => ({ default: module.NewsletterPage })))
 const SettingsPage = lazy(() => import("./pages/admin/SettingsPage").then(module => ({ default: module.SettingsPage })))
-const AdminLogsPage = lazy(() => import("./pages/admin/AdminLogsPage").then(module => ({ default: module.AdminLogsPage })))
+
 
 const ProductEditPage = lazy(() => import("./pages/admin/ProductEditPage").then(module => ({ default: module.ProductEditPage })))
 
@@ -149,7 +149,7 @@ function App() {
                                                     <Route path="users" element={<UserListPage />} />
                                                     <Route path="categories" element={<CategoryListPage />} />
                                                     <Route path="newsletter" element={<NewsletterPage />} />
-                                                    <Route path="logs" element={<AdminLogsPage />} />
+
                                                     <Route path="settings" element={<SettingsPage />} />
                                                     <Route index element={<Navigate to="dashboard" replace />} />
                                                 </Route>

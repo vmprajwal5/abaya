@@ -44,7 +44,7 @@ export default function Login() {
       console.log('🔐 Attempting login...');
       
       // We will just do the manual storage and use Context's behavior as requested in the prompt, modified slightly to fit the actual context if needed, or simply let the window.location.reload() handle updating the context. The prompt just shows manual extraction and reload, actually prompt says navigate then nothing. Let's do exactly what prompt said but keep the reload if they had one or rely on context.
-      const response = await authAPI.login({
+      const { data: response } = await authAPI.login({
         email: formData.email.trim(),
         password: formData.password
       });

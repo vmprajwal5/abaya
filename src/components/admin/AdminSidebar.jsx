@@ -7,8 +7,7 @@ import {
     FolderTree,
     Mail,
     Settings,
-    LogOut,
-    Activity
+    LogOut
 } from "lucide-react"
 import { cn } from "../../lib/utils"
 
@@ -30,7 +29,7 @@ export function AdminSidebar() {
         { icon: Users, label: "Customers", path: "/admin/users" },
         { icon: FolderTree, label: "Categories", path: "/admin/categories" },
         { icon: Mail, label: "Newsletter", path: "/admin/newsletter" },
-        { icon: Activity, label: "System Logs", path: "/admin/logs" },
+
         { icon: Settings, label: "Settings", path: "/admin/settings" },
     ]
 

@@ -14,7 +14,8 @@ export function AdminOrdersPage() {
     const fetchOrders = async () => {
         setIsLoading(true)
         try {
-            const data = await adminAPI.getAllOrders();
+            const response = await adminAPI.getAllOrders();
+            const data = response?.data || response;
             const orderList = Array.isArray(data) ? data : (data?.orders || []);
             const sorted = orderList.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
             setOrders(sorted)

@@ -60,7 +60,7 @@ export function ContactPage() {
                         <textarea
                             id="message"
                             required
-                            rows="4"
+                            rows={4}
                             className="w-full border border-gray-300 px-4 py-2 focus:outline-none focus:border-black"
                             value={formData.message}
                             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
