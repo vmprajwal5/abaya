@@ -10,6 +10,11 @@ router.get('/', async (req, res) => {
         if (!settings) {
             settings = await StoreSetting.create({
                 siteName: 'Abaya Store',
+                storeDescription: 'Welcome to our premium modest clothing store.',
+                storeAddress: 'Male, Maldives',
+                currency: 'MVR',
+                taxRate: 6,
+                orderPrefix: 'ABY-',
                 supportEmail: 'support@abaya.com',
                 supportPhone: '+960 1234567',
                 shippingPrice: 50,
@@ -44,6 +49,11 @@ router.put('/', protect, admin, async (req, res) => {
         }
 
         settings.siteName = req.body.siteName || settings.siteName;
+        settings.storeDescription = req.body.storeDescription ?? settings.storeDescription;
+        settings.storeAddress = req.body.storeAddress ?? settings.storeAddress;
+        settings.currency = req.body.currency || settings.currency;
+        settings.taxRate = req.body.taxRate ?? settings.taxRate;
+        settings.orderPrefix = req.body.orderPrefix ?? settings.orderPrefix;
         settings.supportEmail = req.body.supportEmail || settings.supportEmail;
         settings.supportPhone = req.body.supportPhone || settings.supportPhone;
         settings.shippingPrice = req.body.shippingPrice ?? settings.shippingPrice;

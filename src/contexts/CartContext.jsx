@@ -67,14 +67,14 @@ export function CartProvider({ children }) {
 
         setCart(prevCart =>
             prevCart.map(item =>
-                item.id === itemId ? { ...item, quantity } : item
+                (item.productId || item.id || item._id) === itemId ? { ...item, quantity } : item
             )
         );
     };
 
     // Remove item from cart
     const removeFromCart = (productId) => {
-        setCart(prevCart => prevCart.filter(item => item.productId !== productId));
+        setCart(prevCart => prevCart.filter(item => (item.productId || item.id || item._id) !== productId));
         showToast('Item removed from cart');
     };
 
@@ -84,17 +84,26 @@ export function CartProvider({ children }) {
         showToast('Cart cleared');
     };
 
-    // Get cart totals
+    // Helper to safely get price in MVR
+    const getCartItemPriceMVR = (item) => {
+        if (typeof item.price === 'number') return item.price;
+        if (typeof item.price === 'object') return item.price?.mvr || item.price?.originalMvr || 0;
+        if (typeof item.prices === 'object') return item.prices?.mvr || item.prices?.originalMvr || 0;
+        return item.priceMVR || 0;
+    };
+
+    // Get cart totals (in MVR)
     const getCartTotals = () => {
         const subtotal = cart.reduce((total, item) => {
-            return total + (item.price * item.quantity);
+            return total + (getCartItemPriceMVR(item) * item.quantity);
         }, 0);
 
         const shippingCost = settings ? settings.shippingPrice : 50;
         const freeThreshold = settings ? settings.freeShippingThreshold : 1000;
+        const taxRate = settings ? settings.taxRate / 100 : 0.05;
 
         const shipping = subtotal > freeThreshold ? 0 : shippingCost;
-        const tax = subtotal * 0.05; // 5% tax
+        const tax = subtotal * taxRate;
         const total = subtotal + shipping + tax;
 
         return {
@@ -164,6 +173,7 @@ export function CartProvider({ children }) {
         getCartTotals,
         isCartOpen,
         setIsCartOpen,
+        getCartItemPriceMVR,
         itemCount: cart.reduce((count, item) => count + item.quantity, 0),
         validateCart
     };

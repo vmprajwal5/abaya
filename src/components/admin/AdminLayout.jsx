@@ -7,10 +7,10 @@ export function AdminLayout({ children = null }) {
     
     if (loading) return null;
 
-    const isAuthenticated = currentUser && currentUser.role === 'admin'
+    const isAuthenticated = currentUser && currentUser.isAdmin
 
     if (!isAuthenticated) {
-        return <Navigate to="/admin/login" replace />
+        return <Navigate to="/login" replace />
     }
 
     return (

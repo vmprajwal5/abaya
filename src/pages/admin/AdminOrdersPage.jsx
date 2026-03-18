@@ -36,8 +36,8 @@ export function AdminOrdersPage() {
     }
 
     const filteredOrders = orders.filter(o =>
-        o._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        o.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        (o._id || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (o.user?.name || "").toLowerCase().includes(searchTerm.toLowerCase())
     )
 
     return (
@@ -82,23 +82,23 @@ export function AdminOrdersPage() {
                                         <td className="px-6 py-4 font-medium text-gray-900">{order._id}</td>
                                         <td className="px-6 py-4">{order.user?.name || 'Unknown'}</td>
                                         <td className="px-6 py-4">{new Date(order.createdAt).toLocaleDateString()}</td>
-                                        <td className="px-6 py-4 font-medium">MVR {order.totalPrice.toLocaleString()}</td>
+                                        <td className="px-6 py-4 font-medium">MVR {(order.total || 0).toLocaleString()}</td>
                                         <td className="px-6 py-4">
-                                            {order.isPaid ? (
+                                            {order.paymentStatus === 'completed' ? (
                                                 <span className="text-green-600 bg-green-100 px-2 py-1 rounded text-xs font-bold">Paid</span>
                                             ) : (
                                                 <span className="text-red-600 bg-red-100 px-2 py-1 rounded text-xs font-bold">Not Paid</span>
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {order.isDelivered ? (
+                                            {order.orderStatus === 'delivered' ? (
                                                 <span className="text-green-600 bg-green-100 px-2 py-1 rounded text-xs font-bold">Delivered</span>
                                             ) : (
-                                                <span className="text-yellow-600 bg-yellow-100 px-2 py-1 rounded text-xs font-bold">Pending</span>
+                                                <span className="text-yellow-600 bg-yellow-100 px-2 py-1 rounded text-xs font-bold">{order.orderStatus || 'Pending'}</span>
                                             )}
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            {!order.isDelivered && (
+                                            {order.orderStatus !== 'delivered' && (
                                                 <button
                                                     onClick={() => handleDeliver(order._id)}
                                                     className="text-blue-600 hover:text-blue-800 font-medium text-xs flex items-center justify-end gap-1 ml-auto"

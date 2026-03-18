@@ -55,13 +55,20 @@ exports.protect = async (req, res, next) => {
 exports.authorize = (...roles) => {
     return (req, res, next) => {
         if (!roles.includes(req.user.role)) {
-            console.log('❌ User role not authorized:', req.user.role);
             return res.status(403).json({
                 success: false,
                 message: `User role ${req.user.role} is not authorized to access this route`,
             });
         }
-        console.log('✅ User role authorized:', req.user.role);
         next();
     };
+};
+
+// Admin middleware - checks isAdmin flag
+exports.admin = (req, res, next) => {
+    if (req.user && req.user.isAdmin) {
+        next();
+    } else {
+        res.status(401).json({ message: 'Not authorized as an admin' });
+    }
 };

@@ -18,11 +18,11 @@ export function Footer() {
                 {/* COLUMN 1: BRAND */}
                 <div className="space-y-8">
                     <div>
-                        <h2 className="text-xl font-light uppercase tracking-[0.1em] mb-2">ABAYA CLOTHING</h2>
+                        <h2 className="text-xl font-light uppercase tracking-[0.1em] mb-2">{settings?.siteName || 'ABAYA CLOTHING'}</h2>
                         <p className="text-gray-500 text-[10px] uppercase tracking-[0.25em]">Minimalist Modesty</p>
                     </div>
                     <p className="text-gray-500 text-sm font-light leading-relaxed max-w-xs">
-                        Essentials for the modern wardrobe. Designed with precision, crafted for elegance.
+                        {settings?.storeDescription || 'Essentials for the modern wardrobe. Designed with precision, crafted for elegance.'}
                     </p>
                     <div className="flex gap-6 pt-2">
                         {settings?.socialLinks?.instagram && (
@@ -98,7 +98,7 @@ export function Footer() {
 
             {/* BOTTOM BAR */}
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 pt-12 flex flex-col md:flex-row justify-between items-center gap-6">
-                <p className="text-[10px] text-gray-400 uppercase tracking-wider">&copy; 2026 Abaya Clothing. All rights reserved.</p>
+                <p className="text-[10px] text-gray-400 uppercase tracking-wider">&copy; {new Date().getFullYear()} {settings?.siteName || 'Abaya Clothing'}. All rights reserved.</p>
 
                 <div className="flex items-center gap-6">
                     {/* Currency Selector Text Only */}

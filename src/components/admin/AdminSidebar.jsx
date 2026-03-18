@@ -28,6 +28,7 @@ export function AdminSidebar() {
         { icon: ShoppingCart, label: "Orders", path: "/admin/orders" },
         { icon: Users, label: "Customers", path: "/admin/users" },
         { icon: FolderTree, label: "Categories", path: "/admin/categories" },
+        { icon: Mail, label: "Messages", path: "/admin/messages" },
         { icon: Mail, label: "Newsletter", path: "/admin/newsletter" },
 
         { icon: Settings, label: "Settings", path: "/admin/settings" },

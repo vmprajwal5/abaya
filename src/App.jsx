@@ -53,6 +53,7 @@ const OrderListPage = lazy(() => import("./pages/admin/OrderListPage").then(modu
 const UserListPage = lazy(() => import("./pages/admin/UserListPage").then(module => ({ default: module.UserListPage })))
 const CategoryListPage = lazy(() => import("./pages/admin/CategoryListPage").then(module => ({ default: module.CategoryListPage })))
 const NewsletterPage = lazy(() => import("./pages/admin/NewsletterPage").then(module => ({ default: module.NewsletterPage })))
+const AdminMessagesPage = lazy(() => import("./pages/admin/AdminMessagesPage.jsx").then(module => ({ default: module.AdminMessagesPage })))
 const SettingsPage = lazy(() => import("./pages/admin/SettingsPage").then(module => ({ default: module.SettingsPage })))
 
 
@@ -139,7 +140,7 @@ function App() {
                                                 </Route>
 
                                                 {/* Admin Routes - No Public Layout */}
-                                                <Route path="/admin/login" element={<AdminLoginPage />} />
+                                                <Route path="/admin/login" element={<Navigate to="/login" replace />} />
 
                                                 <Route path="/admin" element={<AdminLayout />}>
                                                     <Route path="dashboard" element={<DashboardHome />} />
@@ -149,6 +150,7 @@ function App() {
                                                     <Route path="users" element={<UserListPage />} />
                                                     <Route path="categories" element={<CategoryListPage />} />
                                                     <Route path="newsletter" element={<NewsletterPage />} />
+                                                    <Route path="messages" element={<AdminMessagesPage />} />
 
                                                     <Route path="settings" element={<SettingsPage />} />
                                                     <Route index element={<Navigate to="dashboard" replace />} />

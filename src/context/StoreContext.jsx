@@ -8,8 +8,13 @@ export const useStoreSettings = () => {
 };
 
 export const StoreProvider = ({ children }) => {
-    const [settings] = useState({
+    const [settings, setSettings] = useState({
         siteName: 'Abaya Store',
+        storeDescription: 'Welcome to our premium modest clothing store.',
+        storeAddress: 'Male, Maldives',
+        currency: 'MVR',
+        taxRate: 6,
+        orderPrefix: 'ABY-',
         supportEmail: '',
         supportPhone: '',
         shippingPrice: 50,
@@ -21,16 +26,18 @@ export const StoreProvider = ({ children }) => {
 
     const fetchSettings = async () => {
         try {
-            // Settings API does not exist yet. Use defaults.
-            setLoading(false);
+            const data = await API.get('/settings');
+            if (data) {
+                setSettings(data);
+            }
         } catch (error) {
             console.error('Failed to fetch store settings:', error);
+        } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchSettings();
     }, []);
 

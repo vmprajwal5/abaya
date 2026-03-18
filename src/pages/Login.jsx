@@ -41,32 +41,32 @@ export default function Login() {
     setLoading(true);
 
     try {
-      console.log('🔐 Attempting login...');
-      
-      // We will just do the manual storage and use Context's behavior as requested in the prompt, modified slightly to fit the actual context if needed, or simply let the window.location.reload() handle updating the context. The prompt just shows manual extraction and reload, actually prompt says navigate then nothing. Let's do exactly what prompt said but keep the reload if they had one or rely on context.
-      const { data: response } = await authAPI.login({
+      // authAPI.login already returns response.data via the interceptor
+      const response = await authAPI.login({
         email: formData.email.trim(),
         password: formData.password
       });
 
-      console.log('✅ Login response:', response);
+      // api.js interceptor returns response.data directly (not a full AxiosResponse)
+      // JSDoc cast so TS checker doesn't infer the AxiosResponse shape
+      const { _id, name, token, isAdmin } = /** @type {any} */ (response) || {};
 
-      if (response && response.success && response.user) {
-        // Store user AND token
-        localStorage.setItem('user', JSON.stringify(response.user));
-        if (response.token) {
-          localStorage.setItem('token', response.token);
+      if (_id) {
+        // Store user and token
+        localStorage.setItem('user', JSON.stringify(response));
+        if (token) {
+          localStorage.setItem('token', token);
         }
         
-        toast.success(`Welcome back, ${response.user.name || 'User'}!`);
+        toast.success(`Welcome back, ${name || 'User'}!`);
         
         setTimeout(() => {
-          if (response.user.role === 'admin') {
+          if (isAdmin) {
             navigate('/admin/dashboard');
           } else {
             navigate('/');
           }
-          window.location.reload(); // Keep reload to update context state since we bypassed Context.login
+          window.location.reload();
         }, 500);
       }
     } catch (error) {

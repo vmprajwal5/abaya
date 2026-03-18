@@ -45,6 +45,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/settings', require('./routes/settingRoutes'));
 app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/messages', require('./routes/messageRoutes'));
 
 const __basedir = path.resolve();
 app.use('/uploads', express.static(path.join(__basedir, '/uploads')));
@@ -54,7 +55,7 @@ const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);

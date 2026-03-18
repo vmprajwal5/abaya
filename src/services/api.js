@@ -89,18 +89,18 @@ api.interceptors.response.use(
 // ═══════════════════════════════════════════════════════════
 
 export const authAPI = {
-  register: (data) => api.post('/auth/register', data),
-  login: (data) => api.post('/auth/login', data),
-  logout: () => api.post('/auth/logout'),
-  getMe: () => api.get('/auth/me'),
-  updateProfile: (data) => api.put('/auth/profile', data),
-  changePassword: (data) => api.put('/auth/password', data),
-  addAddress: (data) => api.post('/auth/addresses', data),
-  updateAddress: (id, data) => api.put(`/auth/addresses/${id}`, data),
-  deleteAddress: (id) => api.delete(`/auth/addresses/${id}`),
-  getWishlist: () => api.get('/auth/wishlist'),
-  addToWishlist: (productId) => api.post(`/auth/wishlist/${productId}`),
-  removeFromWishlist: (productId) => api.delete(`/auth/wishlist/${productId}`),
+  register: (data) => api.post('/users', data),
+  login: (data) => api.post('/users/login', data),
+  logout: () => { localStorage.removeItem('user'); localStorage.removeItem('token'); return Promise.resolve(); },
+  getMe: () => api.get('/users/me'),
+  updateProfile: (data) => api.put('/users/profile', data),
+  changePassword: (data) => api.put('/users/password', data),
+  addAddress: (data) => api.post('/users/addresses', data),
+  updateAddress: (id, data) => api.put(`/users/addresses/${id}`, data),
+  deleteAddress: (id) => api.delete(`/users/addresses/${id}`),
+  getWishlist: () => api.get('/users/wishlist'),
+  addToWishlist: (productId) => api.post(`/users/wishlist/${productId}`),
+  removeFromWishlist: (productId) => api.delete(`/users/wishlist/${productId}`),
 };
 
 // ═══════════════════════════════════════════════════════════
@@ -193,6 +193,13 @@ export const uploadAPI = {
       'Content-Type': 'multipart/form-data',
     },
   }),
+};
+
+export const contactAPI = {
+  submit: (data) => api.post('/messages', data),
+  getAll: () => api.get('/messages'),
+  markAsRead: (id) => api.put(`/messages/${id}/read`),
+  delete: (id) => api.delete(`/messages/${id}`),
 };
 
 export default api;

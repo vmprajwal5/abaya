@@ -48,9 +48,10 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         /** @type {any} */
         const response = await authAPI.login({ email, password });
-        if (response && response.user) {
-            setCurrentUser(response.user);
-            localStorage.setItem('user', JSON.stringify(response.user));
+        // Backend returns { _id, name, email, isAdmin, token } directly
+        if (response && response._id) {
+            setCurrentUser(response);
+            localStorage.setItem('user', JSON.stringify(response));
             if (response.token) {
                 localStorage.setItem('token', response.token);
             }
@@ -61,9 +62,10 @@ export const AuthProvider = ({ children }) => {
     const signup = async (name, email, password, phone) => {
         /** @type {any} */
         const response = await authAPI.register({ name, email, password, phone });
-        if (response && response.user) {
-            setCurrentUser(response.user);
-            localStorage.setItem('user', JSON.stringify(response.user));
+        // Backend returns { _id, name, email, isAdmin, token } directly
+        if (response && response._id) {
+            setCurrentUser(response);
+            localStorage.setItem('user', JSON.stringify(response));
             if (response.token) {
                 localStorage.setItem('token', response.token);
             }

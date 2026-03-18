@@ -1,5 +1,4 @@
 const Product = require('../models/Product');
-const { logAdminAction, logPerformance } = require('../middleware/logging');
 
 const getProducts = async (req, res) => {
     try {
@@ -48,16 +47,6 @@ const deleteProduct = async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
-        // Before deletion:
-        logAdminAction('PRODUCT_DELETED', req.user, {
-          productId: product._id,
-          productName: product.name,
-          lastPrice: product.price,
-          lastStock: product.stock,
-          ip: req.ip,
-          requestId: req.id,
-        });
-
         await Product.deleteOne({ _id: product._id });
         res.json({ message: 'Product removed' });
     } else {
@@ -100,16 +89,6 @@ const createProduct = async (req, res) => {
 
         const createdProduct = await product.save();
 
-        // After product creation:
-        logAdminAction('PRODUCT_CREATED', req.user, {
-          productId: product._id,
-          productName: product.name,
-          price: product.price,
-          stock: product.stock,
-          ip: req.ip,
-          requestId: req.id,
-        });
-
         res.status(201).json(createdProduct);
     } catch (error) {
         res.status(400).json({ message: 'Invalid product data', error: error.message });
@@ -151,28 +130,6 @@ const updateProduct = async (req, res) => {
         product.isFeatured = isFeatured !== undefined ? isFeatured : product.isFeatured;
 
         const updatedProduct = await product.save();
-
-        // Track what changed
-        const changes = {};
-        const fieldsToTrack = ['name', 'price', 'stock', 'description', 'isFeatured'];
-
-        fieldsToTrack.forEach(field => {
-          if (oldProduct[field] !== updatedProduct[field]) {
-            changes[field] = {
-              from: oldProduct[field],
-              to: updatedProduct[field],
-            };
-          }
-        });
-
-        // Log admin action
-        logAdminAction('PRODUCT_MODIFIED', req.user, {
-          productId: updatedProduct._id,
-          productName: updatedProduct.name,
-          changes,
-          ip: req.ip,
-          requestId: req.id,
-        });
 
         res.json(updatedProduct);
     } else {

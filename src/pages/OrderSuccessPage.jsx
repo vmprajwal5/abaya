@@ -20,7 +20,7 @@ export function OrderSuccessPage() {
 
   const fetchOrder = async () => {
     try {
-      const response = await orderAPI.getOrder(orderId);
+      const response = await orderAPI.getOne(orderId);
       setOrder(response.data || response); // Handle varying response structures
     } catch (error) {
       console.error('Failed to fetch order:', error);
@@ -65,6 +65,33 @@ export function OrderSuccessPage() {
             Thank you for your purchase. We have received your order.
           </p>
         </div>
+
+        {/* Dynamic Payment Instructions */}
+        {order.paymentMethod === 'bml' && (
+            <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg mb-6">
+                <h3 className="text-lg font-bold text-blue-900 mb-2">Manual Bank Transfer Instructions</h3>
+                <p className="text-blue-800 mb-4">Please transfer the total amount to the following BML account and send the receipt to our WhatsApp.</p>
+                <div className="bg-white p-4 rounded border border-blue-100 font-mono text-sm space-y-2">
+                    <p><span className="font-semibold">Bank:</span> Bank of Maldives (BML)</p>
+                    <p><span className="font-semibold">Account Name:</span> Abaya Clothing</p>
+                    <p><span className="font-semibold">Account Number:</span> 7730 1234 5678 901</p>
+                    <p><span className="font-semibold">Reference:</span> {order.orderNumber || order._id}</p>
+                </div>
+                <a href={`https://wa.me/9607771234?text=Hi, I have transferred MVR ${order.total?.toFixed(2) || order.totalPrice?.toFixed(2)} for order ${order.orderNumber || order._id}.`} target="_blank" rel="noreferrer" className="inline-block mt-4 bg-green-500 text-white px-6 py-2 rounded font-semibold hover:bg-green-600 transition">
+                    Send Receipt via WhatsApp
+                </a>
+            </div>
+        )}
+
+        {order.paymentMethod === 'card' && (
+            <div className="bg-green-50 border border-green-200 p-6 rounded-lg mb-6">
+                <h3 className="text-lg font-bold text-green-900 mb-2 flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    Payment Successful
+                </h3>
+                <p className="text-green-800">Your credit/debit card has been successfully charged. (Demo mode: No real funds were deducted)</p>
+            </div>
+        )}
 
         {/* Order Details Card */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">

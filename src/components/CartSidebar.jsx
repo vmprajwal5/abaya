@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 
 function CartSidebar() {
-    const { cart, removeFromCart, updateQuantity, isCartOpen, setIsCartOpen, getCartTotals } = useCart();
-    const { currency, formatPrice } = useCurrency();
+    const { cart, removeFromCart, updateQuantity, isCartOpen, setIsCartOpen, getCartTotals, getCartItemPriceMVR, clearCart } = useCart();
+    const { currency, formatPrice, convertPrice } = useCurrency();
     const navigate = useNavigate();
 
-    const totals = getCartTotals(currency);
+    const totals = getCartTotals();
 
     if (!isCartOpen) return null;
 
@@ -24,9 +24,19 @@ function CartSidebar() {
             <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white z-50 flex flex-col animate-slide-in border-l border-gray-100">
                 {/* Header */}
                 <div className="flex items-center justify-between p-8 border-b border-gray-100">
-                    <h2 className="text-sm font-medium uppercase tracking-[0.1em]">
-                        Shopping Bag ({totals.itemCount})
-                    </h2>
+                    <div className="flex items-baseline gap-4">
+                        <h2 className="text-sm font-medium uppercase tracking-[0.1em]">
+                            Shopping Bag ({totals.itemCount})
+                        </h2>
+                        {cart.length > 0 && (
+                            <button 
+                                onClick={clearCart}
+                                className="text-[10px] text-red-500 hover:text-red-700 uppercase tracking-wider font-bold"
+                            >
+                                Clear Empty Items
+                            </button>
+                        )}
+                    </div>
                     <button
                         onClick={() => setIsCartOpen(false)}
                         className="p-2 -mr-2 hover:opacity-50 transition-opacity"
@@ -52,10 +62,10 @@ function CartSidebar() {
                         </div>
                     ) : (
                         <div className="space-y-8">
-                            {cart.map(item => {
-                                if (!item || !item.name) return null;
+                            {cart.map((item, idx) => {
+                                if (!item) return null;
                                 return (
-                                    <div key={item.productId || item.id || item._id} className="flex gap-6">
+                                    <div key={item.productId || item.id || item._id || idx} className="flex gap-6">
                                         {/* Image */}
                                         <div className="w-24 h-32 flex-shrink-0 bg-gray-50 overflow-hidden">
                                             <img
@@ -70,15 +80,13 @@ function CartSidebar() {
                                             <div>
                                                 <div className="flex justify-between items-start gap-4 mb-2">
                                                     <h3 className="font-medium text-sm text-black line-clamp-2 uppercase tracking-wide">
-                                                        {item?.name}
+                                                        {item?.name || item?.title || 'Unknown Item'}
                                                     </h3>
                                                     <p className="font-medium text-sm text-black whitespace-nowrap">
                                                         {(() => {
-                                                            const priceObj = item.price || item.prices || {};
-                                                            const price = currency === 'USD'
-                                                                ? (priceObj.usd || priceObj.originalUsd || 0)
-                                                                : (priceObj.mvr || priceObj.originalMvr || 0);
-                                                            return formatPrice(price * item.quantity);
+                                                            const mvrPrice = getCartItemPriceMVR(item);
+                                                            const displayPrice = convertPrice(mvrPrice, 'MVR');
+                                                            return formatPrice(displayPrice * item.quantity);
                                                         })()}
                                                     </p>
                                                 </div>
@@ -129,17 +137,17 @@ function CartSidebar() {
                         <div className="space-y-4 mb-8">
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-500 uppercase tracking-wider text-xs">Subtotal</span>
-                                <span className="font-medium">{formatPrice(totals.subtotal)}</span>
+                                <span className="font-medium">{formatPrice(convertPrice(totals.subtotal, 'MVR'))}</span>
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-500 uppercase tracking-wider text-xs">Shipping</span>
                                 <span className="font-medium">
-                                    {totals.shipping === 0 ? 'CALCULATED AT CHECKOUT' : formatPrice(totals.shipping)}
+                                    {totals.shipping === 0 ? 'CALCULATED AT CHECKOUT' : formatPrice(convertPrice(totals.shipping, 'MVR'))}
                                 </span>
                             </div>
                             <div className="flex justify-between text-base font-medium pt-4 border-t border-gray-100">
                                 <span className="uppercase tracking-widest text-sm">Total</span>
-                                <span>{formatPrice(totals.total)}</span>
+                                <span>{formatPrice(convertPrice(totals.total, 'MVR'))}</span>
                             </div>
                         </div>
 

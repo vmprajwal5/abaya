@@ -10,6 +10,7 @@ import { Link, useNavigate, Navigate } from "react-router-dom"
 import { useCart } from "../contexts/CartContext"
 import { useCurrency } from "../contexts/CurrencyContext"
 import { useAuth } from "../contexts/AuthContext"
+import useStoreSettings from "../hooks/useStoreSettings"
 import { Button } from "../components/ui/button"
 import { cn } from "../lib/utils"
 import { openWhatsApp } from "../lib/whatsapp"
@@ -142,6 +143,7 @@ export function CheckoutPage() {
     const { currentUser, loading } = useAuth()
     const { cart, clearCart } = useCart()
     const { currency, formatPrice, convertPrice } = useCurrency()
+    const { settings } = useStoreSettings()
     const [step, setStep] = useState(1)
     const [isProcessing, setIsProcessing] = useState(false)
     const [showOrderSummary, setShowOrderSummary] = useState(false)
@@ -188,16 +190,18 @@ export function CheckoutPage() {
     const subtotalMVR = cart.reduce((acc, item) => acc + (item.price || item.priceMVR || 0) * item.quantity, 0)
 
     // Shipping Rules
-    const isFreeShippingMVR = subtotalMVR > 2500
+    const freeShippingThreshold = settings?.freeShippingThreshold ?? 2500
+    const isFreeShippingMVR = subtotalMVR >= freeShippingThreshold
 
     const isCod = paymentMethod === "cod"
     const codFeeMVR = isCod ? 50 : 0
 
-    const shippingBaseMVR = isFreeShippingMVR ? 0 : 35
+    const shippingBaseMVR = isFreeShippingMVR ? 0 : (settings?.shippingPrice ?? 35)
 
     const finalShippingMVR = shippingBaseMVR + codFeeMVR
 
-    const taxMVR = subtotalMVR * 0.06 // 6% GST
+    const taxRate = (settings?.taxRate ?? 6) / 100
+    const taxMVR = subtotalMVR * taxRate
 
     const totalMVR = subtotalMVR + finalShippingMVR + taxMVR
 
@@ -210,7 +214,12 @@ export function CheckoutPage() {
         if (step === 1) {
             fieldsToValidate = ["email", "phone", "firstName", "lastName", "address", "city", "state"]
         } else if (step === 2) {
-            // In a real app, validate payment fields here if payment method is 'card'
+            const currentPaymentMethod = formValues.paymentMethod || "card"
+            if (currentPaymentMethod === "card") {
+                fieldsToValidate = ["cardName", "cardNumber", "cardExpiry", "cardCvc"]
+            } else {
+                fieldsToValidate = ["paymentMethod"]
+            }
         }
 
         const isStepValid = await trigger(fieldsToValidate)
@@ -319,7 +328,7 @@ export function CheckoutPage() {
                 } else if (status === 400) {
                     errorMsg = data.message || 'Invalid order data. Please check your information.';
                 } else if (status === 404) {
-                    errorMsg = 'Order endpoint not found. Please contact support.';
+                    errorMsg = data.message || 'Order endpoint not found. Please contact support.';
                 } else if (status === 500) {
                     errorMsg = 'Server error. Please try again later.';
                 } else {
@@ -751,7 +760,7 @@ export function CheckoutPage() {
                                             <button type="button" onClick={() => setStep(2)} className="text-xs text-secondary underline">Edit</button>
                                         </h4>
                                         <p className="text-sm text-gray-600 capitalize">
-                                            Method: {paymentMethod === 'cod' ? 'Cash on Delivery' : paymentMethod}<br />
+                                            Method: {paymentMethod === 'cod' ? 'Cash on Delivery' : paymentMethod === 'bml' ? 'Bank of Maldives (BML)' : paymentMethod === 'card' ? 'Credit / Debit Card' : paymentMethod}<br />
                                         </p>
                                     </div>
                                 </div>
@@ -789,8 +798,17 @@ export function CheckoutPage() {
                                     <Button type="button" variant="ghost" onClick={prevStep} className="w-full md:w-auto">Back</Button>
                                     <div className="flex flex-col items-center gap-2 w-full md:w-auto">
                                         {error && (
-                                            <div className="text-red-500 text-sm mb-2 text-center bg-red-50 p-2 rounded border border-red-200 w-full">
-                                                {error}
+                                            <div className="text-red-500 text-sm mb-2 text-center bg-red-50 p-3 rounded-md border border-red-200 w-full">
+                                                <p>{error}</p>
+                                                {error.includes("Product not found") && (
+                                                    <button 
+                                                        type="button" 
+                                                        onClick={() => { clearCart(); navigate('/'); }} 
+                                                        className="mt-3 block mx-auto px-4 py-1.5 bg-red-100 text-red-700 rounded text-xs font-bold hover:bg-red-200 transition-colors"
+                                                    >
+                                                        Clear Invalid Cart & Return to Shop
+                                                    </button>
+                                                )}
                                             </div>
                                         )}
                                         <Button

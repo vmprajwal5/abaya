@@ -15,8 +15,10 @@ export function UserListPage() {
     const fetchCustomers = async () => {
         try {
             setLoading(true)
-            const { data } = await getUsers()
-            setCustomers(data)
+            const response = await getUsers()
+            const data = response?.data || response;
+            const userList = Array.isArray(data) ? data : (data?.users || [])
+            setCustomers(userList)
         } catch (err) {
             setError("Failed to load customers")
             console.error(err)
@@ -74,10 +76,12 @@ export function UserListPage() {
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {filteredCustomers.length > 0 ? (
-                                filteredCustomers.map((customer) => (
-                                    <tr key={customer._id} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-6 py-4 text-xs font-mono">{customer._id.slice(-6)}...</td>
-                                        <td className="px-6 py-4 font-medium text-gray-900">{customer.name}</td>
+                                filteredCustomers.map((customer, index) => (
+                                    <tr key={customer._id || index} className="hover:bg-gray-50 transition-colors">
+                                        <td className="px-6 py-4 text-xs font-mono">
+                                            {customer._id ? customer._id.toString().slice(-6) + '...' : 'N/A'}
+                                        </td>
+                                        <td className="px-6 py-4 font-medium text-gray-900">{customer.name || 'Unknown'}</td>
                                         <td className="px-6 py-4">{customer.email}</td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${customer.isAdmin ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}`}>

@@ -38,7 +38,7 @@ function Navbar() {
                                     <path d="M12 2L2 22h20L12 2z"/>
                                     <path d="M12 10l-4 8h8l-4-8z"/>
                                 </svg>
-                                <span>Abaya Clothing</span>
+                                <span>{settings?.siteName || 'Abaya Clothing'}</span>
                             </a>
                         </div>
 

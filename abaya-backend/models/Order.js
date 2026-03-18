@@ -21,7 +21,8 @@ const orderSchema = new mongoose.Schema({
         quantity: { type: Number, required: true },
         price: { type: Number, required: true },
         size: { type: String },
-        color: { type: String }
+        color: { type: String },
+        image: { type: String }
     }],
     shippingAddress: {
         address: { type: String, required: true },
@@ -77,11 +78,15 @@ const orderSchema = new mongoose.Schema({
     timestamps: true
 });
 
-orderSchema.pre('validate', function (next) {
+orderSchema.pre('validate', async function (next) {
     if (!this.orderNumber) {
+        const StoreSetting = mongoose.model('StoreSetting')
+        const settings = await StoreSetting.findOne()
+        const prefix = settings?.orderPrefix || 'ORD-'
+        
         const timestamp = Date.now();
         const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-        this.orderNumber = `ORD-${timestamp}-${random}`;
+        this.orderNumber = `${prefix}${timestamp}-${random}`;
     }
     next();
 });

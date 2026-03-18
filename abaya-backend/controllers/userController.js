@@ -9,26 +9,28 @@ const generateToken = (id) => {
 };
 
 const authUser = async (req, res) => {
-    const { email, password } = req.body;
+    try {
+        const { email, password } = req.body;
 
-    if (!email || !password) {
-        res.status(400);
-        throw new Error('Please provide both email and password');
-    }
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Please provide both email and password' });
+        }
 
-    const user = await User.findOne({ email });
+        const user = await User.findOne({ email });
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-        res.json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            isAdmin: user.isAdmin,
-            token: generateToken(user._id),
-        });
-    } else {
-        res.status(401);
-        throw new Error('Invalid Email or Password');
+        if (user && (await bcrypt.compare(password, user.password))) {
+            res.json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                isAdmin: user.isAdmin,
+                token: generateToken(user._id),
+            });
+        } else {
+            res.status(401).json({ message: 'Invalid Email or Password' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message || 'Server Error' });
     }
 };
 

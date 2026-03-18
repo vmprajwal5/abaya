@@ -1,6 +1,7 @@
 import { motion } from "framer-motion"
 import { useState } from "react"
 import toast from "react-hot-toast"
+import { contactAPI } from "../services/api"
 
 export function ContactPage() {
     const [formData, setFormData] = useState({ name: '', email: '', message: '' })
@@ -9,12 +10,16 @@ export function ContactPage() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
-        // Simulate API call
-        setTimeout(() => {
+        
+        try {
+            await contactAPI.submit(formData)
             toast.success("Thank you for your message. We will get back to you shortly.")
             setFormData({ name: '', email: '', message: '' })
+        } catch (error) {
+            toast.error(error?.response?.data?.message || "Failed to send message. Please try again.")
+        } finally {
             setLoading(false)
-        }, 1000)
+        }
     }
 
     return (
