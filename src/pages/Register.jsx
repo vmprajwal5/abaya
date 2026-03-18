@@ -83,9 +83,13 @@ export default function Register() {
 
       console.log('✅ Registration response:', response);
 
-      if (response && response.success) {
+      if (response && response.success && response.user) {
         localStorage.setItem('user', JSON.stringify(response.user));
-        toast.success(`Welcome, ${response.user?.name}!`);
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+        }
+
+        toast.success(`Welcome, ${response.user.name}!`);
         
         setTimeout(() => {
           navigate('/');

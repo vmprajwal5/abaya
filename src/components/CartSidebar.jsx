@@ -94,14 +94,14 @@ function CartSidebar() {
                                             <div className="flex items-center justify-between pt-4">
                                                 <div className="flex items-center border border-gray-200">
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                        onClick={() => updateQuantity(item.productId || item.id || item._id, item.quantity - 1)}
                                                         className="w-8 h-8 flex items-center justify-center hover:bg-gray-50 text-gray-500 transition-colors"
                                                     >
                                                         -
                                                     </button>
                                                     <span className="w-8 h-8 flex items-center justify-center text-xs font-medium">{item.quantity}</span>
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                        onClick={() => updateQuantity(item.productId || item.id || item._id, item.quantity + 1)}
                                                         className="w-8 h-8 flex items-center justify-center hover:bg-gray-50 text-gray-500 transition-colors"
                                                     >
                                                         +
@@ -109,7 +109,7 @@ function CartSidebar() {
                                                 </div>
 
                                                 <button
-                                                    onClick={() => removeFromCart(item.id)}
+                                                    onClick={() => removeFromCart(item.productId || item.id || item._id)}
                                                     className="text-xs text-gray-400 hover:text-black underline underline-offset-4 transition-colors uppercase tracking-wider"
                                                 >
                                                     Remove

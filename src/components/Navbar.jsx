@@ -8,6 +8,7 @@ import useStoreSettings from '../hooks/useStoreSettings';
 
 function Navbar() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { currentUser } = useAuth();
     const navigate = useNavigate();
 
@@ -82,9 +83,40 @@ function Navbar() {
 
                             {/* Cart Icon */}
                             <CartIcon />
+
+                            {/* Mobile Menu Button */}
+                            <button
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                className="md:hidden p-2 hover:opacity-60 transition-opacity ml-1"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    {isMobileMenuOpen ? (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                                    ) : (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
+                                    )}
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
+
+                {/* Mobile Menu */}
+                {isMobileMenuOpen && (
+                    <div className="md:hidden border-t border-gray-100 bg-white shadow-lg">
+                        <div className="flex flex-col px-4 py-4 space-y-4">
+                            <a href="/" className="text-sm text-gray-600 uppercase tracking-wider" onClick={() => setIsMobileMenuOpen(false)}>Home</a>
+                            <a href="/shop" className="text-sm text-gray-600 uppercase tracking-wider" onClick={() => setIsMobileMenuOpen(false)}>All Products</a>
+                            <a href="/best-sellers" className="text-sm text-gray-600 uppercase tracking-wider" onClick={() => setIsMobileMenuOpen(false)}>Best Sellers</a>
+                            <a href="/about" className="text-sm text-gray-600 uppercase tracking-wider" onClick={() => setIsMobileMenuOpen(false)}>About</a>
+                            <a href="/contact" className="text-sm text-gray-600 uppercase tracking-wider" onClick={() => setIsMobileMenuOpen(false)}>Contact</a>
+                            {currentUser?.role === 'admin' && (
+                                <a href="/admin/dashboard" className="text-sm text-red-600 font-medium uppercase tracking-wider" onClick={() => setIsMobileMenuOpen(false)}>Admin Dashboard</a>
+                            )}
+                        </div>
+                    </div>
+                )}
+                
                 <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
             </nav>
         </>

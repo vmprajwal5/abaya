@@ -108,7 +108,7 @@ const CartPage = () => {
                                     <div className="flex justify-between items-center mt-4">
                                         <div className="flex items-center border border-gray-200">
                                             <button
-                                                onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                                                onClick={() => updateQuantity(item.productId || item.id || item._id, item.quantity - 1)}
                                                 className="px-3 py-1 hover:bg-gray-50"
                                                 disabled={item.quantity <= 1}
                                             >
@@ -116,7 +116,7 @@ const CartPage = () => {
                                             </button>
                                             <span className="px-3 py-1 text-sm">{item.quantity}</span>
                                             <button
-                                                onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                                                onClick={() => updateQuantity(item.productId || item.id || item._id, item.quantity + 1)}
                                                 className="px-3 py-1 hover:bg-gray-50"
                                             >
                                                 +
@@ -124,7 +124,7 @@ const CartPage = () => {
                                         </div>
 
                                         <button
-                                            onClick={() => removeFromCart(item.productId)}
+                                            onClick={() => removeFromCart(item.productId || item.id || item._id)}
                                             className="text-red-500 text-xs uppercase tracking-wider hover:underline"
                                         >
                                             Remove

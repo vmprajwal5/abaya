@@ -32,10 +32,13 @@ const cachedGet = async (url, config) => {
   return response;
 };
 
-// Request interceptor - Add logging
+// Request interceptor - Add logging and Auth Header
 api.interceptors.request.use(
   (config) => {
-    // console.log(`🚀 API Request: ${config.method.toUpperCase()} ${config.url}`);
+    const token = localStorage.getItem('token');
+    if (token && !config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
@@ -60,7 +63,6 @@ api.interceptors.response.use(
         ? 'Cannot connect to server. Please check your internet connection.'
         : 'Request timeout. Please try again.';
       
-      // Don't show toast here - let component handle it
       return Promise.reject({
         message: errorMsg,
         isNetworkError: true,
@@ -71,54 +73,10 @@ api.interceptors.response.use(
     const { status, data } = error.response;
     console.error(`Server Error: ${status}`, data);
 
-    // Handle specific status codes
-    switch (status) {
-      case 400:
-        // Bad Request - validation errors
-        // console.log('Validation Error:', data);
-        break;
-
-      case 401:
-        // Unauthorized - invalid credentials or no token
-        console.log('Unauthorized:', data.message);
-        
-        // Only redirect if not already on login page
-        if (!window.location.pathname.includes('/login') && 
-            !window.location.pathname.includes('/register')) {
-          localStorage.removeItem('user');
-          // Don't redirect immediately - let component handle it
-        }
-        break;
-
-      case 403:
-        // Forbidden - user doesn't have permission
-        // console.log('Forbidden:', data.message);
-        break;
-
-      case 404:
-        // Not Found
-        // console.log('Not Found:', data.message);
-        break;
-
-      case 423:
-        // Locked - account locked
-        // console.log('Account Locked:', data.message);
-        break;
-
-      case 429:
-        // Too Many Requests - rate limited
-        // console.log('Rate Limited:', data.message);
-        break;
-
-      case 500:
-      case 502:
-      case 503:
-        // Server Error
-        // console.log('Server Error:', data.message);
-        break;
-
-      default:
-        // console.log('Unknown Error:', status, data);
+    if (status === 401) {
+      // Clear invalid session
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
     }
 
     // Return error with response data

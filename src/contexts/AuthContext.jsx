@@ -51,6 +51,9 @@ export const AuthProvider = ({ children }) => {
         if (response && response.user) {
             setCurrentUser(response.user);
             localStorage.setItem('user', JSON.stringify(response.user));
+            if (response.token) {
+                localStorage.setItem('token', response.token);
+            }
         }
         return response;
     };
@@ -61,6 +64,9 @@ export const AuthProvider = ({ children }) => {
         if (response && response.user) {
             setCurrentUser(response.user);
             localStorage.setItem('user', JSON.stringify(response.user));
+            if (response.token) {
+                localStorage.setItem('token', response.token);
+            }
         }
         return response;
     };
@@ -69,6 +75,7 @@ export const AuthProvider = ({ children }) => {
         authAPI.logout();
         setCurrentUser(null);
         localStorage.removeItem('user');
+        localStorage.removeItem('token');
         localStorage.removeItem('userInfo'); // Cleanup old admin user tokens
     };
 

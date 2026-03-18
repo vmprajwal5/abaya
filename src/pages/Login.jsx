@@ -2,9 +2,16 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { authAPI } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth(); // getting login from context if we want, but it takes email password. 
+  // Wait, user provided: loginUser(response.user); We need to check useAuth from AuthContext to see what setter they have, actually AuthContext.jsx doesn't have a loginUser function exposed, only 'login(e,p)' which calls the API itself. The AuthContext.jsx check shows: `const value = { currentUser, loading, login, signup, logout };`.
+  // The user prompt said `loginUser(response.user)` - let me look at AuthContext again. It exposes `currentUser` and `login`. 
+  // But AuthContext has a full `login` method that does the API call and sets the user/token. 
+  // So let's just make Login.jsx use AuthContext.login! Or keep it as is, and just set token manually as per prompt.
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -21,7 +28,6 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Simple validation - no external API calls
     if (!formData.email.trim()) {
       toast.error('Please enter your email');
       return;
@@ -37,6 +43,7 @@ export default function Login() {
     try {
       console.log('🔐 Attempting login...');
       
+      // We will just do the manual storage and use Context's behavior as requested in the prompt, modified slightly to fit the actual context if needed, or simply let the window.location.reload() handle updating the context. The prompt just shows manual extraction and reload, actually prompt says navigate then nothing. Let's do exactly what prompt said but keep the reload if they had one or rely on context.
       const response = await authAPI.login({
         email: formData.email.trim(),
         password: formData.password
@@ -44,17 +51,22 @@ export default function Login() {
 
       console.log('✅ Login response:', response);
 
-      if (response && response.success) {
+      if (response && response.success && response.user) {
+        // Store user AND token
         localStorage.setItem('user', JSON.stringify(response.user));
-        toast.success(`Welcome back, ${response.user?.name || 'User'}!`);
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+        }
+        
+        toast.success(`Welcome back, ${response.user.name || 'User'}!`);
         
         setTimeout(() => {
-          if (response.user?.role === 'admin') {
+          if (response.user.role === 'admin') {
             navigate('/admin/dashboard');
           } else {
             navigate('/');
           }
-          window.location.reload();
+          window.location.reload(); // Keep reload to update context state since we bypassed Context.login
         }, 500);
       }
     } catch (error) {
