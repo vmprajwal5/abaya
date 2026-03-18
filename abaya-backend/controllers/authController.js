@@ -40,12 +40,15 @@ exports.register = async (req, res) => {
 
     const token = generateToken(user._id);
 
+    // Set httpOnly cookie
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
+
+    console.log('✅ User registered:', user.email);
 
     res.status(201).json({
       success: true,
@@ -56,7 +59,7 @@ exports.register = async (req, res) => {
         email: user.email,
         role: user.role,
       },
-      token,
+      token, // Also send in response body for localStorage backup
     });
   } catch (error) {
     console.error('Register error:', error);
@@ -74,9 +77,8 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    console.log('Login attempt for:', email);
+    console.log('🔐 Login attempt for:', email);
 
-    // Simple validation
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -87,6 +89,7 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
 
     if (!user) {
+      console.log('❌ User not found:', email);
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password',
@@ -96,6 +99,7 @@ exports.login = async (req, res) => {
     const isPasswordMatch = await user.comparePassword(password);
 
     if (!isPasswordMatch) {
+      console.log('❌ Password mismatch for:', email);
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password',
@@ -104,14 +108,15 @@ exports.login = async (req, res) => {
 
     const token = generateToken(user._id);
 
+    // Set httpOnly cookie with proper settings for production
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production', // true in production
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site in production
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
-    console.log('Login successful for:', user.email);
+    console.log('✅ Login successful for:', user.email, 'Role:', user.role);
 
     res.status(200).json({
       success: true,
@@ -122,13 +127,49 @@ exports.login = async (req, res) => {
         email: user.email,
         role: user.role,
       },
-      token,
+      token, // Also send in body for backup
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('❌ Login error:', error);
     res.status(500).json({
       success: false,
       message: error.message || 'Error logging in',
+    });
+  }
+};
+
+// @desc    Get current user
+// @route   GET /api/auth/me
+// @access  Private
+exports.getMe = async (req, res) => {
+  try {
+    console.log('📋 Getting user info for:', req.user?.id);
+
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    console.log('✅ User info retrieved:', user.email);
+
+    res.status(200).json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error('❌ Get me error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching user data',
     });
   }
 };
@@ -146,99 +187,4 @@ exports.logout = async (req, res) => {
     success: true,
     message: 'User logged out successfully',
   });
-};
-
-// @desc    Get current user
-// @route   GET /api/auth/me
-// @access  Private
-exports.getMe = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-
-    res.status(200).json({
-      success: true,
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error fetching user data',
-    });
-  }
-};
-
-// @desc    Update profile
-// @route   PUT /api/auth/profile
-// @access  Private
-exports.updateProfile = async (req, res) => {
-  try {
-    const { name, phone } = req.body;
-    const user = await User.findById(req.user.id);
-
-    if (name) user.name = name;
-    if (phone) user.phone = phone;
-
-    await user.save();
-
-    res.status(200).json({
-      success: true,
-      message: 'Profile updated successfully',
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error updating profile',
-    });
-  }
-};
-
-// @desc    Change password
-// @route   PUT /api/auth/password
-// @access  Private
-exports.changePassword = async (req, res) => {
-  try {
-    const { currentPassword, newPassword } = req.body;
-
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide current and new password',
-      });
-    }
-
-    const user = await User.findById(req.user.id).select('+password');
-    const isMatch = await user.comparePassword(currentPassword);
-
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: 'Current password is incorrect',
-      });
-    }
-
-    user.password = newPassword;
-    await user.save();
-
-    res.status(200).json({
-      success: true,
-      message: 'Password changed successfully',
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error changing password',
-    });
-  }
 };

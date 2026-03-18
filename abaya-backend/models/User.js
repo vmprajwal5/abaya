@@ -91,6 +91,13 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
   }
 };
 
+// Check if password changed after token was issued
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+  // Always return false as we don't currently track password changes
+  // Add passwordChangedAt to schema and update this if needed in the future
+  return false;
+};
+
 // Update timestamp on save
 userSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
