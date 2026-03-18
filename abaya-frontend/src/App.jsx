@@ -1,12 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
 
-// Pages
+// Import pages (create placeholder pages for missing ones)
 import Home from './pages/Home';
 import Products from './pages/Products';
-import ProductDetail from './pages/ProductDetail';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import About from './pages/About';
@@ -17,6 +13,15 @@ import AdminDashboard from './pages/AdminDashboard';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+
+// Placeholder components for missing pages
+const ProductDetail = () => <div className="container mx-auto px-4 py-8"><h1 className="text-2xl font-bold">Product Detail Page</h1></div>;
+const Cart = () => <div className="container mx-auto px-4 py-8"><h1 className="text-2xl font-bold">Cart Page</h1></div>;
+const Checkout = () => <div className="container mx-auto px-4 py-8"><h1 className="text-2xl font-bold">Checkout Page</h1></div>;
+const MyOrders = () => <div className="container mx-auto px-4 py-8"><h1 className="text-2xl font-bold">My Orders Page</h1></div>;
+const AdminProducts = () => <div className="container mx-auto px-4 py-8"><h1 className="text-2xl font-bold">Admin Products Management</h1></div>;
+const AdminOrders = () => <div className="container mx-auto px-4 py-8"><h1 className="text-2xl font-bold">Admin Orders Management</h1></div>;
+const AdminCustomers = () => <div className="container mx-auto px-4 py-8"><h1 className="text-2xl font-bold">Customer Logs</h1></div>;
 
 function App() {
   return (
@@ -36,12 +41,20 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             
-            {/* Protected Routes */}
+            {/* Protected User Routes */}
             <Route
               path="/checkout"
               element={
                 <ProtectedRoute>
                   <Checkout />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-orders"
+              element={
+                <ProtectedRoute>
+                  <MyOrders />
                 </ProtectedRoute>
               }
             />
@@ -55,13 +68,44 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/admin/products"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <AdminProducts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/orders"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <AdminOrders />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/customers"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <AdminCustomers />
+                </ProtectedRoute>
+              }
+            />
             
-            <Route path="*" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-2xl">404 - Page Not Found</h1></div>} />
+            {/* 404 */}
+            <Route path="*" element={
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                  <h1 className="text-4xl font-bold mb-4">404</h1>
+                  <p className="text-gray-600">Page not found</p>
+                </div>
+              </div>
+            } />
           </Routes>
         </main>
 
         <Footer />
-        <Toaster position="top-center" />
       </div>
     </Router>
   );

@@ -2,7 +2,15 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function ProtectedRoute({ children, adminOnly = false }) {
-  const { user, loading } = useAuth();
+  const { user, loading, isAdmin, isAuthenticated } = useAuth();
+
+  console.log('🔒 ProtectedRoute check:', {
+    user,
+    loading,
+    adminOnly,
+    isAdmin: isAdmin(),
+    isAuthenticated: isAuthenticated()
+  });
 
   if (loading) {
     return (
@@ -12,13 +20,16 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
     );
   }
 
-  if (!user) {
+  if (!isAuthenticated()) {
+    console.log('❌ Not authenticated, redirecting to login');
     return <Navigate to="/login" replace />;
   }
 
-  if (adminOnly && user.role !== 'admin') {
+  if (adminOnly && !isAdmin()) {
+    console.log('❌ Not admin, redirecting to home');
     return <Navigate to="/" replace />;
   }
 
+  console.log('✅ Access granted');
   return children;
 }

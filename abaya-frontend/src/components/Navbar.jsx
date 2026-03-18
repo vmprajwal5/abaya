@@ -13,7 +13,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-sm">
+    <nav className="bg-white shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -23,30 +23,33 @@ export default function Navbar() {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-gray-700 hover:text-black">
+            <Link to="/" className="text-gray-700 hover:text-black transition-colors">
               Home
             </Link>
-            <Link to="/products" className="text-gray-700 hover:text-black">
+            <Link to="/products" className="text-gray-700 hover:text-black transition-colors">
               All Products
             </Link>
-            <Link to="/about" className="text-gray-700 hover:text-black">
+            <Link to="/about" className="text-gray-700 hover:text-black transition-colors">
               About
             </Link>
-            <Link to="/contact" className="text-gray-700 hover:text-black">
+            <Link to="/contact" className="text-gray-700 hover:text-black transition-colors">
               Contact
             </Link>
             
-            {/* Admin Link - Only for admins */}
-            {isAdmin() && (
-              <Link to="/admin/dashboard" className="text-red-600 hover:text-red-700 font-semibold">
-                Admin Dashboard
+            {/* Admin Link - Only visible to admins */}
+            {user && isAdmin() && (
+              <Link
+                to="/admin/dashboard"
+                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors font-semibold"
+              >
+                ⚙️ Admin Panel
               </Link>
             )}
           </div>
 
-          {/* Right Side Icons */}
+          {/* Right Side */}
           <div className="flex items-center space-x-4">
-            <span className="text-sm">MVR</span>
+            <span className="text-sm text-gray-600">MVR</span>
             
             <button className="text-gray-700 hover:text-black">
               🔍
@@ -55,23 +58,33 @@ export default function Navbar() {
             {/* User Account */}
             {user ? (
               <div className="flex items-center space-x-4">
-                <Link to="/my-orders" className="text-gray-700 hover:text-black">
-                  👤 {user.name}
-                </Link>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm font-medium text-gray-700">
+                    👤 {user.name}
+                  </span>
+                  {isAdmin() && (
+                    <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">
+                      Admin
+                    </span>
+                  )}
+                </div>
                 <button
                   onClick={handleLogout}
-                  className="text-sm text-gray-700 hover:text-black"
+                  className="text-sm text-gray-700 hover:text-black bg-gray-100 px-3 py-1 rounded hover:bg-gray-200 transition-colors"
                 >
                   Logout
                 </button>
               </div>
             ) : (
-              <Link to="/login" className="text-gray-700 hover:text-black">
+              <Link
+                to="/login"
+                className="text-gray-700 hover:text-black bg-gray-100 px-4 py-2 rounded hover:bg-gray-200 transition-colors"
+              >
                 👤 Login
               </Link>
             )}
 
-            <Link to="/cart" className="text-gray-700 hover:text-black">
+            <Link to="/cart" className="text-gray-700 hover:text-black text-xl">
               🛒
             </Link>
           </div>

@@ -19,10 +19,14 @@ export const AuthProvider = ({ children }) => {
     const loadUser = () => {
       try {
         const storedUser = localStorage.getItem('user');
+        console.log('📦 Loading user from storage:', storedUser);
+        
         if (storedUser) {
           const userData = JSON.parse(storedUser);
           setUser(userData);
-          console.log('✅ User loaded from storage:', userData);
+          console.log('✅ User loaded:', userData);
+        } else {
+          console.log('❌ No user in storage');
         }
       } catch (error) {
         console.error('Error loading user:', error);
@@ -36,23 +40,27 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData) => {
+    console.log('🔐 Logging in user:', userData);
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
-    console.log('✅ User logged in:', userData);
   };
 
   const logout = () => {
+    console.log('👋 Logging out user');
     setUser(null);
     localStorage.removeItem('user');
-    console.log('✅ User logged out');
   };
 
   const isAdmin = () => {
-    return user && user.role === 'admin';
+    const admin = user && user.role === 'admin';
+    console.log('🔍 Is admin?', admin, 'User:', user);
+    return admin;
   };
 
   const isAuthenticated = () => {
-    return !!user;
+    const auth = !!user;
+    console.log('🔍 Is authenticated?', auth, 'User:', user);
+    return auth;
   };
 
   const value = {
@@ -63,6 +71,14 @@ export const AuthProvider = ({ children }) => {
     isAdmin,
     isAuthenticated,
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider value={value}>
