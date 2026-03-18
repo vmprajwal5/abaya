@@ -145,10 +145,10 @@ export function DashboardHome() {
                                         <tr key={order._id}>
                                             <td className="px-6 py-4 text-xs font-mono">{order._id.slice(-6)}...</td>
                                             <td className="px-6 py-4">{order.user?.name || 'Unknown'}</td>
-                                            <td className="px-6 py-4">MVR {order.totalPrice.toLocaleString()}</td>
+                                            <td className="px-6 py-4">MVR {(order.total || 0).toLocaleString()}</td>
                                             <td className="px-6 py-4">
-                                                <span className={`px-2 py-1 rounded-full text-xs ${order.isPaid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                                    {order.isPaid ? 'Paid' : 'Unpaid'}
+                                                <span className={`px-2 py-1 rounded-full text-xs ${order.paymentStatus === 'completed' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                                    {order.paymentStatus === 'completed' ? 'Paid' : 'Unpaid'}
                                                 </span>
                                             </td>
                                         </tr>

@@ -171,7 +171,7 @@ export const adminAPI = {
   deleteUser: (id) => api.delete(`/users/${id}`),
   
   // Dashboard
-  getDashboardStats: () => api.get('/admin/stats/dashboard'),
+  getDashboardStats: () => api.get('/orders/stats'),
 };
 
 export const getUsers = () => api.get('/users');
