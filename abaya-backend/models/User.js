@@ -91,6 +91,15 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
   }
 };
 
+// Also support matchPassword for routes/auth.js
+userSchema.methods.matchPassword = async function(enteredPassword) {
+  try {
+    return await bcrypt.compare(enteredPassword, this.password);
+  } catch (error) {
+    throw new Error('Password comparison failed');
+  }
+};
+
 // Check if password changed after token was issued
 userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
   // Always return false as we don't currently track password changes
