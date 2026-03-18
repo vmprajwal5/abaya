@@ -88,7 +88,6 @@ export function ProductDetails() {
     const [selectedColor, setSelectedColor] = useState(null)
     const [quantity, setQuantity] = useState(1)
     const [activeTab, setActiveTab] = useState("description")
-    const [addingToCart, setAddingToCart] = useState(false)
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -131,7 +130,6 @@ export function ProductDetails() {
         }
 
         try {
-            setAddingToCart(true);
 
             // Add local context fallback just in case backend fails, for smooth demo
             addToCart({
@@ -184,8 +182,6 @@ export function ProductDetails() {
             }
             // We already did local addToCart, so we just log or show a warning
             toast.error(errorMsg);
-        } finally {
-            setAddingToCart(false);
         }
     };
 

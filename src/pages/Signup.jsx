@@ -57,11 +57,7 @@ export default function Signup() {
         }
     };
 
-    // Password strength helpers
-    const hasMinLength = password.length >= 8;
-    const hasUpper = /[A-Z]/.test(password);
-    const hasLower = /[a-z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
+    // Password strength helpers are handled in PasswordStrength component
 
     return (
         <div className="min-h-screen pt-32 pb-20 px-4 bg-gray-50 flex items-center justify-center">

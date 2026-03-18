@@ -8,7 +8,7 @@ export const useStoreSettings = () => {
 };
 
 export const StoreProvider = ({ children }) => {
-    const [settings, setSettings] = useState({
+    const [settings] = useState({
         siteName: 'Abaya Store',
         supportEmail: '',
         supportPhone: '',
@@ -30,6 +30,7 @@ export const StoreProvider = ({ children }) => {
     };
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchSettings();
     }, []);
 

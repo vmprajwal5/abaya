@@ -31,8 +31,8 @@ export function AdminDashboard() {
         const fetchStats = async () => {
             try {
                 // Determine if we are in dev or prod, or just handle potential errors gracefully
-                const data = await adminAPI.getDashboardStats()
-                setStats(data || {
+                const response = await adminAPI.getDashboardStats()
+                setStats(response?.data || response || {
                     totalOrders: 0,
                     totalSales: 0,
                     totalUsers: 0,

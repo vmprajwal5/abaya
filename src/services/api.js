@@ -1,5 +1,5 @@
 import axios from 'axios';
-import toast from 'react-hot-toast';
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -226,6 +226,10 @@ export const adminLogsAPI = {
 };
 
 export const uploadAPI = {
+  /**
+   * @param {FormData} formData
+   * @returns {Promise<{ image: string }>}
+   */
   uploadImage: (formData) => api.post('/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',

@@ -1,16 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import zxcvbn from 'zxcvbn';
 
 export default function PasswordStrength({ password }) {
-  const [strength, setStrength] = useState(null);
-
-  useEffect(() => {
-    if (password) {
-      const result = zxcvbn(password);
-      setStrength(result);
-    } else {
-      setStrength(null);
-    }
+  const strength = useMemo(() => {
+    if (!password) return null;
+    return zxcvbn(password);
   }, [password]);
 
   if (!strength) return null;

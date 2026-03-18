@@ -183,7 +183,7 @@ export function OrderSuccessPage() {
 
         {/* Additional Info */}
         <div className="mt-8 text-center text-sm text-gray-600">
-          <p>We've sent a confirmation email to your registered email address.</p>
+          <p>We&apos;ve sent a confirmation email to your registered email address.</p>
           <p className="mt-2">
             Questions? <Link to="/contact" className="text-blue-600 hover:underline">Contact us</Link>
           </p>

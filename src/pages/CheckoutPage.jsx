@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useLocation } from "react-router-dom"
+
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -227,10 +227,10 @@ export function CheckoutPage() {
 
     // Redirect if cart is empty - "The Smooth Flow"
     useEffect(() => {
-        if (cart.length === 0 && !isProcessing && !location.search.includes('orderId')) {
+        if (cart.length === 0 && !isProcessing && !window.location.search.includes('orderId')) {
             navigate('/');
         }
-    }, [cart, navigate, isProcessing, location]);
+    }, [cart, navigate, isProcessing]);
 
     const onSubmit = async (data) => {
         // Validate required fields first
@@ -286,8 +286,10 @@ export function CheckoutPage() {
             
             toast.dismiss(loadingToast);
 
-            if (response?.success || response?._id) {
-                const newOrder = response.order || response;
+            // Our api.js interceptor unwraps response.data, so response *is* the data
+            const responseData = response?.data || response;
+            if (responseData?.success || responseData?._id) {
+                const newOrder = responseData.order || responseData;
                 toast.success('Order placed successfully! 🎉');
                 if (data.saveInfo) {
                     // Future: Save profile info

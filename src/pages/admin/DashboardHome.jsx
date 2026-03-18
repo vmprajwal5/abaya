@@ -32,20 +32,23 @@ export function DashboardHome() {
             try {
                 const [statsRes, ordersRes, productsRes] = await Promise.all([
                     adminAPI.getDashboardStats(),
-                    adminAPI.getOrders(),
+                    adminAPI.getAllOrders(),
                     productAPI.getAll()
                 ])
 
-                setStats(statsRes.data || {
+                setStats(statsRes?.data || statsRes || {
                     totalOrders: 0,
                     totalSales: 0,
                     totalUsers: 0,
                     dailySales: []
                 })
 
-                if (ordersRes.data) {
+                // Axios interceptor returns response.data directly! 
+                const ordersData = ordersRes?.data || ordersRes;
+                const orders = ordersData?.orders || ordersData;
+                if (Array.isArray(orders)) {
                     // Sort by date desc and take top 5
-                    const sorted = ordersRes.data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                    const sorted = orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
                     setRecentOrders(sorted.slice(0, 5))
                 }
 

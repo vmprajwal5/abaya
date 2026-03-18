@@ -102,13 +102,16 @@ function App() {
                                                     <Route path="/track-order" element={<TrackOrderPage />} />
                                                     <Route path="/size-guide" element={<SizeGuidePage />} />
                                                     <Route path="/faqs" element={<FaqPage />} />
+                                                    <Route path="/faq" element={<Navigate to="/faqs" replace />} />
                                                     <Route path="/payment-methods" element={<PaymentMethodsPage />} />
 
                                                     {/* Legal Pages */}
                                                     <Route path="/terms" element={<TermsPage />} />
                                                     <Route path="/return-policy" element={<ReturnPolicyPage />} />
+                                                    <Route path="/returns" element={<Navigate to="/return-policy" replace />} />
                                                     <Route path="/shipping-policy" element={<ShippingPolicyPage />} />
                                                     <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                                                    <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
 
                                                     {/* Auth Routes */}
                                                     <Route path="/login" element={<Login />} />

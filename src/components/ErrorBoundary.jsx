@@ -23,7 +23,7 @@ class ErrorBoundary extends Component {
               Something went wrong
             </h1>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              We're sorry for the inconvenience. Please refresh the page to try again.
+              We&apos;re sorry for the inconvenience. Please refresh the page to try again.
             </p>
             <button
               onClick={() => window.location.reload()}

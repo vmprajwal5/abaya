@@ -55,7 +55,7 @@ export function CartProvider({ children }) {
             }
         });
 
-        setIsCartOpen(true);
+        setTimeout(() => setIsCartOpen(true), 0);
     };
 
     // Update cart item quantity

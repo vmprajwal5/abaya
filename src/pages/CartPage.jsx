@@ -22,7 +22,8 @@ const CartPage = () => {
         }
         try {
             const response = await cartAPI.updateItem(itemId, { quantity: newQuantity });
-            if (response?.success || response?.cart) {
+            const responseData = response?.data || response;
+            if (responseData?.success || responseData?.cart) {
                 contextUpdate(itemId, newQuantity);
                 toast.success('Cart updated');
             }
@@ -37,7 +38,8 @@ const CartPage = () => {
     const removeFromCart = async (itemId) => {
         try {
             const response = await cartAPI.removeItem(itemId);
-            if (response?.success || response?.cart) {
+            const responseData = response?.data || response;
+            if (responseData?.success || responseData?.cart || responseData?._id) {
                 contextRemove(itemId);
                 toast.success('Item removed from cart');
             }
@@ -48,23 +50,6 @@ const CartPage = () => {
         }
     };
 
-    // Apply coupon
-    const applyCoupon = async (code) => {
-        if (!code || code.trim() === '') {
-            toast.error('Please enter a coupon code');
-            return;
-        }
-        try {
-            const response = await cartAPI.applyCoupon(code.trim());
-            if (response?.success) {
-                toast.success(`Coupon applied! You saved MVR ${response.data.discount}`);
-            }
-        } catch (error) {
-            console.error('Apply coupon error:', error);
-            const errorMsg = error.response?.data?.message || 'Invalid or expired coupon';
-            toast.error(errorMsg);
-        }
-    };
 
     // Convert totals from MVR to current currency
     const convertedTotals = {

@@ -1,0 +1,72 @@
+﻿
+> temp-app@0.0.0 lint
+> eslint .
+
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\abaya-frontend\src\context\AuthContext.jsx
+  5:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\abaya-frontend\src\pages\Login.jsx
+  169:16  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\src\components\ui\button.jsx
+  58:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\src\context\StoreContext.jsx
+   6:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        react-refresh/only-export-components
+  11:22  error    'setSettings' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           no-unused-vars
+  33:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  31 |
+  32 |     useEffect(() => {
+> 33 |         fetchSettings();
+     |         ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  34 |     }, []);
+  35 |
+  36 |     return (  react-hooks/set-state-in-effect
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\src\contexts\AuthContext.jsx
+  6:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\src\contexts\CartContext.jsx
+  5:14  warning  Fast refresh only works when a file only exports components. Move your React context(s) to a separate file                      react-refresh/only-export-components
+  7:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\src\contexts\CurrencyContext.jsx
+  3:14  warning  Fast refresh only works when a file only exports components. Move your React context(s) to a separate file                      react-refresh/only-export-components
+  5:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\src\contexts\ProductContext.jsx
+  4:14  warning  Fast refresh only works when a file only exports components. Move your React context(s) to a separate file                      react-refresh/only-export-components
+  6:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\src\contexts\ShopContext.jsx
+  6:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\src\pages\CheckoutPage.jsx
+  171:5  warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/incompatible-library')
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\src\pages\OrderSuccessPage.jsx
+  19:6  warning  React Hook useEffect has missing dependencies: 'fetchOrder' and 'navigate'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\src\pages\Signup.jsx
+  61:11  error  'hasMinLength' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  62:11  error  'hasUpper' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u      no-unused-vars
+  63:11  error  'hasLower' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u      no-unused-vars
+  64:11  error  'hasNumber' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u     no-unused-vars
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\src\pages\admin\ProductListPage.jsx
+  55:36  error  'createProduct' is not defined  no-undef
+
+C:\Users\Prajwal\OneDrive\Desktop\Abaya\src\services\api.js
+  2:8  error  'toast' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+Γ£û 22 problems (9 errors, 13 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+

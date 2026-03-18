@@ -49,7 +49,11 @@ export default function Login() {
         toast.success(`Welcome back, ${response.user?.name || 'User'}!`);
         
         setTimeout(() => {
-          navigate('/');
+          if (response.user?.role === 'admin') {
+            navigate('/admin/dashboard');
+          } else {
+            navigate('/');
+          }
           window.location.reload();
         }, 500);
       }
@@ -157,7 +161,7 @@ export default function Login() {
 
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link to="/register" className="font-semibold text-black hover:underline">
               Create one now
             </Link>

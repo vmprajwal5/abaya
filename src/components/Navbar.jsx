@@ -48,6 +48,9 @@ function Navbar() {
                             <a href="/best-sellers" className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors">Best Sellers</a>
                             <a href="/about" className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors">About</a>
                             <a href="/contact" className="text-sm text-gray-600 hover:text-black hover:underline underline-offset-4 transition-colors">Contact</a>
+                            {currentUser?.role === 'admin' && (
+                                <a href="/admin/dashboard" className="text-sm text-red-600 font-medium hover:text-red-700 hover:underline underline-offset-4 transition-colors">Admin Dashboard</a>
+                            )}
                         </div>
 
                         {/* Right Side Icons */}

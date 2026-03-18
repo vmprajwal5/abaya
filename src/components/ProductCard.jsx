@@ -24,8 +24,6 @@ function ProductCard({ product }) {
         addToCart(product, 1);
     };
 
-    // Convert price from MVR (base) to current currency
-    const finalPrice = convertPrice(product.price, 'MVR');
 
     return (
         <motion.div

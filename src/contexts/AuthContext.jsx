@@ -17,18 +17,27 @@ export const AuthProvider = ({ children }) => {
         const checkAuth = async () => {
             const storedUser = localStorage.getItem('user');
             if (storedUser) {
+                // Optimistically set user from storage first so UI doesn't flash
+                const parsed = JSON.parse(storedUser);
+                setCurrentUser(parsed);
                 try {
                     // Verify session is still valid with the server
-                    const response = await authAPI.getMe();
-                    if (response && response.data) {
-                        setCurrentUser(response.data);
-                    } else {
-                        setCurrentUser(JSON.parse(storedUser));
+                    // Note: Axios interceptor already unwraps response.data, so
+                    // the returned value IS the data object (e.g. { _id, role, ... })
+                    /** @type {any} */
+                    const userData = await authAPI.getMe();
+                    if (userData && userData._id) {
+                        setCurrentUser(userData);
+                        localStorage.setItem('user', JSON.stringify(userData));
                     }
                 } catch (error) {
-                    console.error('Auth check failed:', error);
-                    // Session expired or invalid — clear stored user
-                    localStorage.removeItem('user');
+                    console.error('Auth check failed — using stored user:', error);
+                    // Only clear if it's a definitive 401 (not a network error)
+                    if (error?.response?.status === 401) {
+                        localStorage.removeItem('user');
+                        setCurrentUser(null);
+                    }
+                    // Otherwise keep the stored user (server may be temporarily down)
                 }
             }
             setLoading(false);
@@ -37,6 +46,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
+        /** @type {any} */
         const response = await authAPI.login({ email, password });
         if (response && response.user) {
             setCurrentUser(response.user);
@@ -46,6 +56,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const signup = async (name, email, password, phone) => {
+        /** @type {any} */
         const response = await authAPI.register({ name, email, password, phone });
         if (response && response.user) {
             setCurrentUser(response.user);

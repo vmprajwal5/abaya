@@ -55,7 +55,7 @@ function CartSidebar() {
                             {cart.map(item => {
                                 if (!item || !item.name) return null;
                                 return (
-                                    <div key={item.id} className="flex gap-6">
+                                    <div key={item.productId || item.id || item._id} className="flex gap-6">
                                         {/* Image */}
                                         <div className="w-24 h-32 flex-shrink-0 bg-gray-50 overflow-hidden">
                                             <img

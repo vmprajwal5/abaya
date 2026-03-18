@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { Search, Plus, Filter, Edit, Trash2, Loader2 } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
-import { productAPI } from "../../services/api"
+import { productAPI, adminAPI } from "../../services/api"
 import { toast } from "react-hot-toast"
 
 export function ProductListPage() {
@@ -52,7 +52,7 @@ export function ProductListPage() {
         setIsCreating(true)
         try {
             // Logic: Create a new product with "Sample Name"
-            const { data } = await createProduct({}) // Payload optional if backend handles it
+            const { data } = await adminAPI.createProduct({}) // Payload optional if backend handles it
 
             // Then: Automatically navigate to edit page
             toast.success("Sample product created")
