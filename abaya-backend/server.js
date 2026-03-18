@@ -20,7 +20,8 @@ const app = express();
 const allowedOrigins = [
     process.env.FRONTEND_URL,
     'http://localhost:5173',
-    'https://abaya-xnxa.vercel.app'
+    'https://abaya-xnxa.vercel.app',
+    'https://abayaclothing-obn3wtgx7-vmprajwal5s-projects.vercel.app'
 ].filter(Boolean);
 
 app.use(cors({
