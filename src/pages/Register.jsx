@@ -79,7 +79,8 @@ export default function Register() {
         }
       }
 
-      const response = await authAPI.register(registrationData);
+      // response.data is returned directly by the axios interceptor
+      const response = /** @type {any} */ (await authAPI.register(registrationData));
 
       console.log('✅ Registration response:', response);
 
@@ -178,7 +179,7 @@ export default function Register() {
                 disabled={loading}
                 className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-black disabled:bg-gray-100"
                 placeholder="9876543210 (10 digits)"
-                maxLength="10"
+                maxLength={10}
               />
               <p className="mt-1 text-xs text-gray-500">
                 Enter 10 digits only, or leave empty

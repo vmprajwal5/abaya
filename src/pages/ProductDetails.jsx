@@ -149,11 +149,11 @@ export function ProductDetails() {
                 price: product.price,
             };
 
-            const response = await cartAPI.addItem(cartData);
+            await cartAPI.addItem(cartData);
 
-            if (response?.success) {
-                toast.success('Added to cart! 🛒');
-            }
+            // Since any backend errors (400, 500) will be caught by the catch block below,
+            // reaching this line means the request was successful.
+            toast.success('Added to cart! 🛒');
 
         } catch (error) {
             console.error('Add to cart error:', error);

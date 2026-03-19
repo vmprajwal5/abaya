@@ -24,6 +24,7 @@ const Login = lazy(() => import("./pages/Login"))
 const Register = lazy(() => import("./pages/Register"))
 const Signup = lazy(() => import("./pages/Signup"))
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"))
+const ResetPassword = lazy(() => import("./pages/ResetPassword"))
 const Profile = lazy(() => import("./pages/Profile"))
 
 // Legal Pages
@@ -119,6 +120,7 @@ function App() {
                                                     <Route path="/signup" element={<Signup />} />
                                                     <Route path="/register" element={<Register />} />
                                                     <Route path="/forgot-password" element={<ForgotPassword />} />
+                                                    <Route path="/reset-password" element={<ResetPassword />} />
                                                     <Route
                                                         path="/profile"
                                                         element={

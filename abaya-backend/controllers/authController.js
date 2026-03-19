@@ -193,3 +193,81 @@ exports.getMe = async (req, res) => {
     });
   }
 };
+
+// @desc    Forgot Password (Demo)
+// @route   POST /api/users/forgot-password
+// @access  Public
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Please provide an email' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found with this email' });
+    }
+
+    // Generate a temporary 15 min JWT token specifically for reset
+    // Includes password hash chunk so it invalidates if password changes
+    const resetToken = jwt.sign(
+      { id: user._id, pHash: user.password.substring(0, 10), purpose: 'reset' },
+      process.env.JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+
+    // Normally this is emailed. For demo, we return it in the API.
+    res.status(200).json({
+      success: true,
+      message: 'Password reset link generated',
+      resetToken
+    });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+// @desc    Reset Password
+// @route   POST /api/users/reset-password
+// @access  Public
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Token and new password are required' });
+    }
+
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.purpose !== 'reset') {
+      return res.status(400).json({ success: false, message: 'Invalid token purpose' });
+    }
+
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Ensure token is still valid for this specific password hash
+    if (decoded.pHash !== user.password.substring(0, 10)) {
+       return res.status(400).json({ success: false, message: 'Token has already been used' });
+    }
+
+    // Save new password
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password successfully reset'
+    });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    if (error.name === 'TokenExpiredError') {
+      return res.status(400).json({ success: false, message: 'Reset token has expired' });
+    }
+    res.status(500).json({ success: false, message: 'Invalid or expired token' });
+  }
+};

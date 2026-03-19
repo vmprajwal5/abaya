@@ -25,8 +25,16 @@ export default function ForgotPassword() {
         setIsLoading(true);
         setError(null);
         try {
-            await authAPI.requestPasswordReset(data.email);
+            const response = await authAPI.forgotPassword({ email: data.email });
+            const responseData = /** @type {any} */ (response);
+            const resetToken = responseData?.resetToken || responseData?.data?.resetToken;
             setIsSubmitted(true);
+            
+            // For Demo: redirect to reset password page automatically
+            setTimeout(() => {
+                window.location.href = `/reset-password?token=${resetToken}`;
+            }, 3000);
+            
         } catch (err) {
             setError(err.message || "Failed to reset password");
         } finally {
@@ -49,6 +57,9 @@ export default function ForgotPassword() {
                             <h1 className="font-serif text-2xl text-primary mb-2">Check your email</h1>
                             <p className="text-gray-500 font-light text-sm">
                                 We&apos;ve sent password reset instructions to your email address.
+                            </p>
+                            <p className="text-secondary font-medium text-xs mt-4">
+                                (Demo Mode: Redirecting to reset page in 3 seconds...)
                             </p>
                         </div>
                         <Button

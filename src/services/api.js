@@ -101,6 +101,8 @@ export const authAPI = {
   getWishlist: () => api.get('/users/wishlist'),
   addToWishlist: (productId) => api.post(`/users/wishlist/${productId}`),
   removeFromWishlist: (productId) => api.delete(`/users/wishlist/${productId}`),
+  forgotPassword: (data) => api.post('/users/forgot-password', data),
+  resetPassword: (data) => api.post('/users/reset-password', data),
 };
 
 // ═══════════════════════════════════════════════════════════
