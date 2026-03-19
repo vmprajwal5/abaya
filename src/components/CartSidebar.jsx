@@ -69,8 +69,8 @@ function CartSidebar() {
                                         {/* Image */}
                                         <div className="w-24 h-32 flex-shrink-0 bg-gray-50 overflow-hidden">
                                             <img
-                                                src={item.productImage}
-                                                alt={item?.name}
+                                                src={item.image || item.productImage}
+                                                alt={item?.name || item?.title || 'Product'}
                                                 className="w-full h-full object-cover grayscale-[20%]"
                                             />
                                         </div>
