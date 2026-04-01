@@ -4,11 +4,13 @@ import './index.css'
 import App from './App.jsx'
 import ErrorBoundary from './components/ErrorBoundary'
 import { Toaster } from 'react-hot-toast'
+import { WishlistProvider } from './contexts/WishlistContext'
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
         <ErrorBoundary>
-            <App />
+            <WishlistProvider>
+                <App />
             <Toaster
               position="top-center"
               reverseOrder={false}
@@ -56,6 +58,7 @@ createRoot(document.getElementById('root')).render(
                 },
               }}
             />
+            </WishlistProvider>
         </ErrorBoundary>
     </StrictMode>,
 )

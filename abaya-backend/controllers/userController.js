@@ -92,4 +92,43 @@ const deleteUser = async (req, res) => {
     }
 };
 
-module.exports = { authUser, registerUser, getUsers, deleteUser };
+const getWishlist = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).populate('wishlist');
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user.wishlist);
+    } catch (error) {
+        res.status(500).json({ message: error.message || 'Server Error' });
+    }
+};
+
+const addToWishlist = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        const productId = req.params.productId;
+        if (!user.wishlist.includes(productId)) {
+            user.wishlist.push(productId);
+            await user.save();
+        }
+        res.json({ message: 'Added to wishlist', wishlist: user.wishlist });
+    } catch (error) {
+        res.status(500).json({ message: error.message || 'Server Error' });
+    }
+};
+
+const removeFromWishlist = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        user.wishlist = user.wishlist.filter(
+            (id) => id.toString() !== req.params.productId
+        );
+        await user.save();
+        res.json({ message: 'Removed from wishlist', wishlist: user.wishlist });
+    } catch (error) {
+        res.status(500).json({ message: error.message || 'Server Error' });
+    }
+};
+
+module.exports = { authUser, registerUser, getUsers, deleteUser, getWishlist, addToWishlist, removeFromWishlist };

@@ -35,6 +35,7 @@ const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage").then(mo
 const AboutPage = lazy(() => import("./pages/AboutPage").then(module => ({ default: module.AboutPage })))
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage").then(module => ({ default: module.NotFoundPage })))
 const BestSellers = lazy(() => import("./pages/BestSellers"))
+const WishlistPage = lazy(() => import("./pages/WishlistPage"))
 
 // Support Pages
 const ContactPage = lazy(() => import("./pages/ContactPage").then(module => ({ default: module.ContactPage })))
@@ -126,6 +127,14 @@ function App() {
                                                         element={
                                                             <ProtectedRoute>
                                                                 <Profile />
+                                                            </ProtectedRoute>
+                                                        }
+                                                    />
+                                                    <Route
+                                                        path="/wishlist"
+                                                        element={
+                                                            <ProtectedRoute>
+                                                                <WishlistPage />
                                                             </ProtectedRoute>
                                                         }
                                                     />

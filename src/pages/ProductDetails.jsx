@@ -4,6 +4,7 @@ import { Star, Heart, Share2, Facebook, Copy, Truck, ShieldCheck, Undo2, ArrowRi
 import { Button } from "../components/ui/button"
 import { useCart } from "../contexts/CartContext"
 import { useCurrency } from "../contexts/CurrencyContext"
+import { useWishlist } from "../contexts/WishlistContext"
 import { cn } from "../lib/utils"
 import { openWhatsApp } from "../lib/whatsapp"
 import * as Accordion from "@radix-ui/react-accordion"
@@ -79,6 +80,7 @@ export function ProductDetails() {
     const { id } = useParams()
     const { addToCart } = useCart()
     const { formatPrice, convertPrice } = useCurrency()
+    const { isWishlisted, toggleWishlist } = useWishlist()
 
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
@@ -189,7 +191,7 @@ export function ProductDetails() {
     const finalPrice = convertPrice(product.price, 'MVR');
 
     return (
-        <div className="pt-24 lg:pt-32 pb-32 lg:pb-20 container animate-fade-in relative">
+        <div className="pt-24 lg:pt-32 pb-56 lg:pb-20 container animate-fade-in relative">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-xs text-gray-500 mb-8 uppercase tracking-widest overflow-x-auto whitespace-nowrap pb-2">
                 <span>Home</span>
@@ -312,7 +314,7 @@ export function ProductDetails() {
                             </div>
                         )}
 
-                        {/* Quantity & Add (Desktop Hidden) */}
+                        {/* Quantity & Add (Desktop) */}
                         <div className="hidden lg:flex gap-4 pt-4">
                             <div className="flex items-center border border-gray-200 w-32 justify-between px-4">
                                 <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="text-gray-500 hover:text-black">-</button>
@@ -325,9 +327,20 @@ export function ProductDetails() {
                             >
                                 Add to Bag
                             </Button>
-                            <div className="w-12 h-12 border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 cursor-pointer transition-colors">
-                                <Heart className="w-5 h-5" />
-                            </div>
+                            <button
+                                onClick={() => toggleWishlist(product._id)}
+                                className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:border-red-300 cursor-pointer transition-colors"
+                                aria-label="Toggle favourite"
+                            >
+                                <Heart
+                                    className={cn(
+                                        "w-5 h-5 transition-colors",
+                                        isWishlisted(product._id)
+                                            ? "fill-red-500 text-red-500"
+                                            : "text-gray-400 hover:text-red-400"
+                                    )}
+                                />
+                            </button>
                         </div>
 
                         {/* Sticky Mobile Bar */}
@@ -342,6 +355,20 @@ export function ProductDetails() {
                             >
                                 Add to Bag
                             </Button>
+                            <button
+                                onClick={() => toggleWishlist(product._id)}
+                                className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:border-red-300 cursor-pointer transition-colors flex-shrink-0"
+                                aria-label="Toggle favourite"
+                            >
+                                <Heart
+                                    className={cn(
+                                        "w-5 h-5 transition-colors",
+                                        isWishlisted(product._id)
+                                            ? "fill-red-500 text-red-500"
+                                            : "text-gray-400"
+                                    )}
+                                />
+                            </button>
                         </div>
 
                         {/* Features */}
