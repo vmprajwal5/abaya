@@ -10,6 +10,7 @@ import { CurrencyProvider } from './contexts/CurrencyContext';
 import { CartProvider } from './contexts/CartContext';
 import { ShopProvider } from './contexts/ShopContext';
 import { StoreProvider } from './context/StoreContext';
+import { WishlistProvider } from './contexts/WishlistContext';
 
 // Lazy Load Pages
 const HomePage = lazy(() => import("./pages/HomePage"))
@@ -80,6 +81,7 @@ function App() {
                     <ProductProvider>
                         <CurrencyProvider>
                             <CartProvider>
+                                <WishlistProvider>
                                 <AuthProvider>
                                     <ScrollToTop />
                                     <Toaster position="top-center" reverseOrder={false} />
@@ -173,6 +175,7 @@ function App() {
                                     </div>
                                     <CartSidebar />
                                 </AuthProvider>
+                                </WishlistProvider>
                             </CartProvider>
                         </CurrencyProvider>
                     </ProductProvider>

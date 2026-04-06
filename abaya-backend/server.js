@@ -30,7 +30,9 @@ app.use(cors({
             allowedOrigins.includes(origin) || 
             allowedOrigins.includes('*') ||
             (origin && origin.endsWith('.vercel.app')) ||
-            (origin && origin.endsWith('.onrender.com'))) {
+            (origin && origin.endsWith('.onrender.com')) ||
+            (origin && origin.startsWith('http://localhost:')) ||
+            (origin && origin.startsWith('http://127.0.0.1:'))) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
